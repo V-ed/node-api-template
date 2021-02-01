@@ -106,9 +106,7 @@ export class Server {
 
 		if (isNaN(port)) {
 			return val;
-		}
-		// eslint-disable-next-line @typescript-eslint/no-magic-numbers
-		else if (port >= 0) {
+		} else if (port >= 0) {
 			return port;
 		} else {
 			return false;
