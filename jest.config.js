@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 require('dotenv').config({ path: '.env.test' });
 
 module.exports = {
@@ -8,4 +10,5 @@ module.exports = {
 	moduleNameMapper: {
 		'^src/(.*)$': '<rootDir>/src/$1',
 	},
+	coveragePathIgnorePatterns: ["<rootDir>/tests/", "<rootDir>/node_modules/"]
 };
