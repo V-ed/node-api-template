@@ -104,10 +104,15 @@ export class Server {
 	private normalizePort(val: number | string): number | string | boolean {
 		const port: number = typeof val === 'string' ? parseInt(val, 10) : val;
 
-		if (isNaN(port)) return val;
+		if (isNaN(port)) {
+			return val;
+		}
 		// eslint-disable-next-line @typescript-eslint/no-magic-numbers
-		else if (port >= 0) return port;
-		else return false;
+		else if (port >= 0) {
+			return port;
+		} else {
+			return false;
+		}
 	}
 
 	private onError(error: NodeJS.ErrnoException, port: unknown): string | NodeJS.ErrnoException {
@@ -115,7 +120,7 @@ export class Server {
 			throw error;
 		}
 		
-		const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+		const bind = typeof port === 'string' ? `Pipe ${port}` : `Port ${port}`;
 
 		switch (error.code) {
 		case 'EACCES':
