@@ -4,6 +4,7 @@ on: pull_request
 
 jobs:
   lint:
+    name: "Lint"
     runs-on: ubuntu-latest
     
     steps:
@@ -18,14 +19,15 @@ jobs:
     - name: Lint
       run: npm run lint
       
-  build-and-test:
+  pr-tests-and-coverage:
+    name: "PR Tests and Coverage"
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v2
       with:
-        node-version: '14'
+        node-version: '12'
 
     - name: Install
       run: npm ci
@@ -36,30 +38,13 @@ jobs:
     - name: Seed
       run: npm run seed
       
-    - name: Test and Coverage
-      run: npm run test:coverage
+    - name: Test
+      run: npm run test
       
-  report-pr-coverage:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-
-    - name: Install
-      run: npm ci
-      
-    - name: Build
-      run: npm run build:clean
-      
-    - name: Seed
-      run: npm run seed
-      
-    - name: Test and Report Coverage
+    - name: Report Coverage
       uses: mattallty/jest-github-action@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        changes-only: true
+      # ! Commented out because it cause issues with the Github Action
+      # with:
+      #   changes-only: true
