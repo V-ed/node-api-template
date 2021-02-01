@@ -57,10 +57,12 @@ jobs:
     - name: Seed
       run: npm run seed
       
-    - name: Test and Report Coverage
+    - name: Test
+      run: npm run pr:coverage
+      
+    - name: Report Coverage
       uses: mattallty/jest-github-action@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         changes-only: true
-        test-command: "npm run pr:coverage"
