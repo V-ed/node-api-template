@@ -5,10 +5,13 @@ const rename = require('gulp-rename');
 const replace = require('gulp-replace');
 const del = require('del');
 
+// CONFIGS
+
+const dest = './dist';
+
 const JSON_FILES = ['src/*.json', 'src/**/*.json'];
-const CSS_FILES = ['public/**/*.css'];
-const JS_FILES = ['public/**/*.js'];
-const IMG_FILES = ['public/images/**/*'];
+
+// TASKS
 
 // pull in the project TypeScript config
 const tsProject = ts.createProject('tsconfig.json');
@@ -16,7 +19,7 @@ const tsProject = ts.createProject('tsconfig.json');
 function scripts(cb) {
 	const tsResult = tsProject.src().pipe(tsProject());
 
-	tsResult.js.pipe(gulp.dest('dist'));
+	tsResult.js.pipe(gulp.dest(dest));
 
 	cb();
 }
@@ -28,25 +31,13 @@ function watch(cb) {
 }
 
 function jsonAssets(cb) {
-	gulp.src(JSON_FILES).pipe(gulp.dest('dist'));
+	gulp.src(JSON_FILES).pipe(gulp.dest(dest));
 
 	cb();
 }
 
-function jsAssets(cb) {
-	gulp.src(JS_FILES, { base: './public' }).pipe(gulp.dest('dist/public'));
-
-	cb();
-}
-
-function cssAssets(cb) {
-	gulp.src(CSS_FILES, { base: './public' }).pipe(gulp.dest('dist/public'));
-
-	cb();
-}
-
-function imgAssets(cb) {
-	gulp.src(IMG_FILES, { base: './public' }).pipe(gulp.dest('dist/public'));
+function buildEnv(cb) {
+	gulp.src('./.env').pipe(gulp.dest(dest));
 
 	cb();
 }
@@ -89,7 +80,7 @@ function setupEnv(cb) {
 }
 
 function deleteDist(cb) {
-	del(['dist']);
+	del([dest]);
 
 	cb();
 }
@@ -126,10 +117,10 @@ function deprecateTmp(cb) {
 	cb();
 }
 
-const build = gulp.parallel(jsonAssets, jsAssets, cssAssets, imgAssets, scripts);
+const build = gulp.parallel(jsonAssets, buildEnv, scripts);
 
 exports.build = build;
 
 exports.cleanbuild = gulp.series(gulp.parallel(deleteDist, deprecateTmp, setupEnv), build);
 
-exports.cleandb = gulp.parallel(deleteUploads, deleteDatabase);
+exports.cleandb = gulp.parallel(deleteDatabase);
