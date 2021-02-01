@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const gulp = require('gulp');
 const ts = require('gulp-typescript');
 const fs = require('fs');
@@ -16,34 +18,29 @@ const JSON_FILES = ['src/*.json', 'src/**/*.json'];
 // pull in the project TypeScript config
 const tsProject = ts.createProject('tsconfig.json');
 
-function scripts(cb) {
+function scripts() {
 	const tsResult = tsProject.src().pipe(tsProject());
 
-	tsResult.js.pipe(gulp.dest(dest));
-
-	cb();
+	return tsResult.js.pipe(gulp.dest(dest));
 }
 
 function watch(cb) {
-	gulp.watch('src/**/*.ts', gulp.series('scripts'));
+	gulp.watch('src/**/*.ts', gulp.series(scripts));
 
 	cb();
 }
 
-function jsonAssets(cb) {
-	gulp.src(JSON_FILES).pipe(gulp.dest(dest));
-
-	cb();
+function jsonAssets() {
+	return gulp.src(JSON_FILES).pipe(gulp.dest(dest));
 }
 
-function buildEnv(cb) {
-	gulp.src('./.env').pipe(gulp.dest(dest));
-
-	cb();
+function buildEnv() {
+	return gulp.src('./.env', { dot: true }).pipe(gulp.dest(dest));
 }
 
 function generateGuid() {
 	var result, i, j;
+
 	result = '';
 	for (j = 0; j < 32; j++) {
 		if (j == 8 || j == 12 || j == 16 || j == 20) result = result + '-';
@@ -55,46 +52,40 @@ function generateGuid() {
 	return result;
 }
 
-function setupEnv(cb) {
-	fs.access('.env', (err) => {
-		if (err) {
-			// If .env doesn't exists, copy .env.example
-			gulp.src('./.env.example').pipe(replace('MY_RANDOM_KEY', generateGuid())).pipe(rename('.env')).pipe(gulp.dest('.'));
-		}
-	});
-
-	fs.access('.env.test', (err) => {
-		if (err) {
-			// If .env.test doesn't exists, copy .env.example
-			gulp
-				.src('./.env.example')
-				.pipe(replace('MY_RANDOM_KEY', generateGuid()))
-				.pipe(replace('PORT=', 'PORT=3005'))
-				.pipe(replace('tmp/database.sqlite', ':memory:'))
-				.pipe(rename('.env.test'))
-				.pipe(gulp.dest('.'));
-		}
-	});
-
+function setupMainEnv(cb) {
+	if (!fs.existsSync('.env')) {
+		return gulp.src('./.env.example').pipe(replace('MY_RANDOM_KEY', generateGuid())).pipe(rename('.env')).pipe(gulp.dest('.'));
+	}
+	
 	cb();
 }
 
-function deleteDist(cb) {
-	del([dest]);
-
+async function setupTestEnv(cb) {
+	if (!fs.existsSync('.env.test')) {
+		return gulp
+			.src('./.env.example')
+			.pipe(replace('MY_RANDOM_KEY', generateGuid()))
+			.pipe(replace('PORT=', 'PORT=3005'))
+			.pipe(replace('tmp/database.sqlite', ':memory:'))
+			.pipe(rename('.env.test'))
+			.pipe(gulp.dest('.'));
+	}
+	
 	cb();
 }
 
-function deleteUploads(cb) {
-	del(['uploads']);
+const setupEnvs = gulp.parallel(setupMainEnv, setupTestEnv);
 
-	cb();
+function deleteDist() {
+	return del([dest]);
 }
 
-function deleteDatabase(cb) {
-	del(['tmp/database.sqlite']);
+function deleteUploads() {
+	return del(['uploads']);
+}
 
-	cb();
+function deleteDatabase() {
+	return del(['tmp/database.sqlite']);
 }
 
 function deprecateTmp(cb) {
@@ -117,10 +108,10 @@ function deprecateTmp(cb) {
 	cb();
 }
 
-const build = gulp.parallel(jsonAssets, buildEnv, scripts);
+const build = gulp.series(gulp.parallel(jsonAssets, buildEnv, scripts));
 
 exports.build = build;
 
-exports.cleanbuild = gulp.series(gulp.parallel(deleteDist, deprecateTmp, setupEnv), build);
+exports.cleanbuild = gulp.series(gulp.parallel(deleteDist, deprecateTmp, setupEnvs), build);
 
 exports.cleandb = gulp.parallel(deleteDatabase);

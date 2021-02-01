@@ -12,7 +12,8 @@ import { createConnection } from 'typeorm';
 // import { QuestionRouter } from './routes/QuestionRouter';
 // import { QuizRouter } from './routes/QuizRouter';
 
-let app = express();
+const app = express();
+
 app.use(express.json());
 
 export class Server {
@@ -21,7 +22,7 @@ export class Server {
 	server: http.Server | undefined;
 
 	constructor(port: number | string, app: Express) {
-		const normalizedPort: any = this.normalizePort(port);
+		const normalizedPort = this.normalizePort(port);
 
 		if (typeof normalizedPort === 'string' || typeof normalizedPort === 'number') {
 			this.port = normalizedPort;
@@ -33,8 +34,8 @@ export class Server {
 		this.server = undefined;
 	}
 
-	public async start() {
-		return new Promise<void>(async (resolve, reject) => {
+	public async start(): Promise<void> {
+		return new Promise<void>((resolve, reject) => {
 			this.server = this.app.listen(this.port, async () => {
 				await createConnection();
 
@@ -96,27 +97,36 @@ export class Server {
 	// 	});
 	// }
 
-	public close() {
-		this.server?.close();
+	public close(): http.Server | undefined {
+		return this.server?.close();
 	}
 
 	private normalizePort(val: number | string): number | string | boolean {
-		let port: number = typeof val === 'string' ? parseInt(val, 10) : val;
-		if (isNaN(port)) return val;
-		else if (port >= 0) return port;
-		else return false;
+		const port: number = typeof val === 'string' ? parseInt(val, 10) : val;
+
+		if (isNaN(port)) {
+			return val;
+		} else if (port >= 0) {
+			return port;
+		} else {
+			return false;
+		}
 	}
 
 	private onError(error: NodeJS.ErrnoException, port: unknown): string | NodeJS.ErrnoException {
-		if (error.syscall !== 'listen') throw error;
-		const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+		if (error.syscall !== 'listen') {
+			throw error;
+		}
+		
+		const bind = typeof port === 'string' ? `Pipe ${port}` : `Port ${port}`;
+
 		switch (error.code) {
-			case 'EACCES':
-				return `${bind} requires elevated privileges`;
-			case 'EADDRINUSE':
-				return `${bind} is already in use`;
-			default:
-				throw error;
+		case 'EACCES':
+			return `${bind} requires elevated privileges`;
+		case 'EADDRINUSE':
+			return `${bind} is already in use`;
+		default:
+			throw error;
 		}
 	}
 }
