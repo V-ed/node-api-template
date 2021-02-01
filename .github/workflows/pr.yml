@@ -63,3 +63,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         changes-only: true
+        test-command: "npm run pr:coverage"

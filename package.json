@@ -17,7 +17,8 @@
     "seed": "npm-run-all -s db:clean db:seed",
     "init": "npm-run-all -s build:clean db:seed",
     "format": "eslint --fix \"src/**/*.ts\"",
-    "lint": "eslint \"src/**/*.ts\""
+    "lint": "eslint \"src/**/*.ts\"",
+    "pr:coverage": "jest --detectOpenHandles --silent --coverage--json --outputFile=\"jest.results.json\""
   },
   "author": "Guillaume Marcoux",
   "license": "MIT",
