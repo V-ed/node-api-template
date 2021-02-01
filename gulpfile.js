@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const gulp = require('gulp');
 const ts = require('gulp-typescript');
 const fs = require('fs');
@@ -37,13 +39,14 @@ function jsonAssets(cb) {
 }
 
 function buildEnv(cb) {
-	gulp.src('./.env').pipe(gulp.dest(dest));
+	gulp.src('./.env', { dot: true }).pipe(gulp.dest(dest));
 
 	cb();
 }
 
 function generateGuid() {
 	var result, i, j;
+
 	result = '';
 	for (j = 0; j < 32; j++) {
 		if (j == 8 || j == 12 || j == 16 || j == 20) result = result + '-';
@@ -100,7 +103,9 @@ function deleteDatabase(cb) {
 function deprecateTmp(cb) {
 	const time = Date.now();
 
-	const files = ['./tmp/**/*', '!./tmp/**/backup', '!./tmp/**/backup/**/*'];
+	const files = [
+		'./tmp/**/*', '!./tmp/**/backup', '!./tmp/**/backup/**/*'
+	];
 
 	gulp
 		.src(files)
