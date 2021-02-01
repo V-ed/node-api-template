@@ -2,7 +2,7 @@ import * as path from 'path';
 import { Connection, createConnection, getRepository } from 'typeorm';
 import { Builder, fixturesIterator, Loader, Parser, Resolver } from 'typeorm-fixtures-cli/dist';
 
-export async function loadFixtures(fixturesPath: string) {
+export async function loadFixtures(fixturesPath: string): Promise<void> {
 	let connection: Connection | undefined;
 
 	try {
@@ -10,6 +10,7 @@ export async function loadFixtures(fixturesPath: string) {
 		await connection.synchronize(true);
 
 		const loader = new Loader();
+
 		loader.load(path.resolve(fixturesPath));
 
 		const resolver = new Resolver();
@@ -17,12 +18,11 @@ export async function loadFixtures(fixturesPath: string) {
 		const builder = new Builder(connection, new Parser());
 
 		for (const fixture of fixturesIterator(fixtures)) {
-			const entity: any = await builder.build(fixture);
+			const entity = await builder.build(fixture);
 			const repo = getRepository(entity.constructor.name);
+
 			repo.save(entity);
 		}
-	} catch (err) {
-		throw err;
 	} finally {
 		if (connection) {
 			await connection.close();
