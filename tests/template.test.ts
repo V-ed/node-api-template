@@ -1,4 +1,4 @@
-import server from '../src/server';
+import server from 'src/server';
 import { loadFixtures } from './utils/fixtures';
 
 // const root = `http://localhost:${process.env.PORT}`;

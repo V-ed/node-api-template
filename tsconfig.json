@@ -72,8 +72,7 @@
 	},
 	"include": [
 		"src/**/*.ts",
-		"./@types/**/*.ts",
-		"./tests/utils/**/*.ts"
+		"./@types/**/*.ts"
 	],
 	"exclude": [
 		"node_modules"

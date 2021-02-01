@@ -5,4 +5,7 @@ module.exports = {
 	roots: ['tests'],
 	testEnvironment: 'node',
 	coverageReporters: ['json-summary', 'text', 'lcov'],
+	moduleNameMapper: {
+		'^src/(.*)$': '<rootDir>/src/$1',
+	},
 };
