@@ -46,5 +46,5 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # ! Commented out because it cause issues with the Github Action
-      # with:
-      #   changes-only: true
+      with:
+        changes-only: true
