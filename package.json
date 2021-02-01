@@ -8,7 +8,7 @@
     "dev": "ts-node -r dotenv/config src/index.ts",
     "watch": "nodemon -r dotenv/config src/index.ts",
     "test": "jest --detectOpenHandles --silent",
-    "test:coverage": "jest --detectOpenHandles --silent --coverage",
+    "coverage:test": "jest --detectOpenHandles --silent --coverage",
     "build": "gulp build",
     "build:clean": "gulp cleanbuild",
     "debug": "node -r ts-node/register --inspect-brk src/index.ts",
@@ -18,7 +18,8 @@
     "init": "npm-run-all -s build:clean db:seed",
     "format": "eslint --fix \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\"",
-    "pr:coverage": "jest --detectOpenHandles --silent --coverage --json --outputFile=\"jest.results.json\""
+    "lint:tests": "eslint \"tests/**/*.ts\"",
+    "coverage:pr": "jest --detectOpenHandles --silent --coverage --json --outputFile=\"jest.results.json\""
   },
   "author": "Guillaume Marcoux",
   "license": "MIT",

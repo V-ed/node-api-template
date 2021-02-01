@@ -8,6 +8,7 @@ on:
 
 jobs:
   lint:
+    name: "Lint"
     runs-on: ubuntu-latest
     
     steps:
@@ -21,8 +22,12 @@ jobs:
         
     - name: Lint
       run: npm run lint
+        
+    - name: Lint Tests
+      run: npm run lint:tests
       
   build-and-test:
+    name: "Build and Test"
     runs-on: ubuntu-latest
 
     steps:
@@ -41,4 +46,4 @@ jobs:
       run: npm run seed
       
     - name: Test and Coverage
-      run: npm run test:coverage
+      run: npm run coverage:test
