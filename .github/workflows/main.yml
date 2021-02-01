@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'dev'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install
+      run: npm ci
+      
+    - name: Build
+      run: npm run clean-build
+      
+    - name: Seed
+      run: npm run seed
+      
+    - name: Test and Coverage
+      run: npm run test:coverage

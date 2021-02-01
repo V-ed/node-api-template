@@ -1,0 +1,10 @@
+entity: User
+items:
+  user{1..3}:
+    id: ($current)
+    username: 'User($current)'
+    firstName: '{{name.firstName}}'
+    lastName: '{{name.lastName}}'
+    # __call:
+    #   setPassword:
+    #     - 'teach'
