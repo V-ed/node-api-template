@@ -2,7 +2,15 @@ import * as path from 'path';
 import { createConnection, getRepository } from 'typeorm';
 import { Builder, fixturesIterator, Loader, Parser, Resolver } from 'typeorm-fixtures-cli/dist';
 
-export async function loadFixtures(fixturesPath: string): Promise<void> {
+/**
+ * Loads the fixtures from the `typeorm-fixtures-cli` package.
+ *
+ * @param fixturesPath The path to the fixtures folder. Defaults to `./fixtures`. `.` refer to preject's root.
+ *
+ * Example paths :
+ * - `${__dirname}/fixtures` - current directory's fixture folder
+ */
+export async function loadFixtures(fixturesPath = './fixtures'): Promise<void> {
 	const connection = await createConnection();
 
 	await connection.synchronize(true);
