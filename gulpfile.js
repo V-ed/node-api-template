@@ -1,42 +1,15 @@
-/* eslint-disable */
-
 const gulp = require('gulp');
-const ts = require('gulp-typescript');
 const fs = require('fs');
 const rename = require('gulp-rename');
 const replace = require('gulp-replace');
 const del = require('del');
+const gulpEsbuild = require('gulp-esbuild');
 
 // CONFIGS
 
-const dest = './dist';
+const buildDest = './dist';
 
-const JSON_FILES = ['src/*.json', 'src/**/*.json'];
-
-// TASKS
-
-// pull in the project TypeScript config
-const tsProject = ts.createProject('tsconfig.json');
-
-function scripts() {
-	const tsResult = tsProject.src().pipe(tsProject());
-
-	return tsResult.js.pipe(gulp.dest(dest));
-}
-
-function watch(cb) {
-	gulp.watch('src/**/*.ts', gulp.series(scripts));
-
-	cb();
-}
-
-function jsonAssets() {
-	return gulp.src(JSON_FILES).pipe(gulp.dest(dest));
-}
-
-function buildEnv() {
-	return gulp.src('./.env', { dot: true }).pipe(gulp.dest(dest));
-}
+// UTILS
 
 function generateGuid() {
 	var result, i, j;
@@ -52,15 +25,49 @@ function generateGuid() {
 	return result;
 }
 
-function setupMainEnv(cb) {
-	if (!fs.existsSync('.env')) {
-		return gulp.src('./.env.example').pipe(replace('MY_RANDOM_KEY', generateGuid())).pipe(rename('.env')).pipe(gulp.dest('.'));
-	}
-	
-	cb();
+// TASKS
+
+// Build Tasks
+
+function esbuild() {
+	return gulp
+		.src('./src/index.ts')
+		.pipe(
+			gulpEsbuild({
+				platform: 'node',
+				bundle: true,
+				// loader: {
+				// 	'.tsx': 'tsx',
+				// },
+			}),
+		)
+		.pipe(gulp.dest(buildDest));
 }
 
-async function setupTestEnv(cb) {
+function buildPackage() {
+	return gulp.src('./package.json').pipe(replace('dist/index.js', 'index.js')).pipe(gulp.dest(buildDest));
+}
+
+function buildEnv() {
+	return gulp.src('./.env', { dot: true }).pipe(gulp.dest(buildDest));
+}
+
+// Creation Tasks
+
+function setupMainEnv() {
+	if (!fs.existsSync('.env')) {
+		return gulp
+			.src('./.env.example')
+			.pipe(replace('MY_RANDOM_KEY', generateGuid()))
+			.pipe(replace('NODE_ENV=development', 'NODE_ENV=production'))
+			.pipe(rename('.env'))
+			.pipe(gulp.dest('.'));
+	}
+	
+	return Promise.resolve();
+}
+
+function setupTestEnv(cb) {
 	if (!fs.existsSync('.env.test')) {
 		return gulp
 			.src('./.env.example')
@@ -71,13 +78,13 @@ async function setupTestEnv(cb) {
 			.pipe(gulp.dest('.'));
 	}
 	
-	cb();
+	return Promise.resolve();
 }
 
-const setupEnvs = gulp.parallel(setupMainEnv, setupTestEnv);
+// Delete tasks
 
 function deleteDist() {
-	return del([dest]);
+	return del([buildDest]);
 }
 
 function deleteUploads() {
@@ -88,7 +95,9 @@ function deleteDatabase() {
 	return del(['tmp/database.sqlite']);
 }
 
-function deprecateTmp(cb) {
+// Deprecation Tasks
+
+function deprecateTmp() {
 	const time = Date.now();
 
 	const files = ['./tmp/**/*', '!./tmp/**/backup', '!./tmp/**/backup/**/*'];
@@ -103,12 +112,16 @@ function deprecateTmp(cb) {
 		)
 		.pipe(gulp.dest('./tmp'));
 
-	del(files);
-
-	cb();
+	return del(files);
 }
 
-const build = gulp.series(gulp.parallel(jsonAssets, buildEnv, scripts));
+// COMBINES
+
+const setupEnvs = gulp.parallel(setupMainEnv, setupTestEnv);
+
+const build = gulp.parallel(buildEnv, buildPackage, esbuild);
+
+// EXPORTS
 
 exports.build = build;
 
