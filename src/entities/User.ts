@@ -15,13 +15,14 @@ export class User extends BaseEntity {
 
 	@Column({
 		unique: true,
+		type: 'text'
 	})
 	public username!: string;
 
-	@Column()
+	@Column({type: 'text'})
 	public firstName!: string;
 
-	@Column()
+	@Column({type: 'text'})
 	public lastName!: string;
 
 	// @Column()

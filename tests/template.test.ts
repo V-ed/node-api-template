@@ -9,7 +9,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-	server.close();
+	await server.close();
 });
 
 describe('Template test', () => {

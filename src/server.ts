@@ -1,51 +1,30 @@
-import express, { Express } from 'express';
 import * as http from 'http';
-import { createConnection } from 'typeorm';
-// import { AbstractApiRouter } from './AbstractApiRouter';
-// import { AbstractRouter } from './AbstractRouter';
-// import { checkCookiesAuth } from './middlewares/checkCookiesAuth';
-// import { CategoryRouter } from './routes/CategoryRouter';
-// import { CourseRouter } from './routes/CourseRouter';
-// import { HomeworkRouter } from './routes/HomeworkRouter';
-// import { IndexRouter } from './routes/IndexRouter';
-// import { LoginRouter } from './routes/LoginRouter';
-// import { QuestionRouter } from './routes/QuestionRouter';
-// import { QuizRouter } from './routes/QuizRouter';
+import { createBasicRoutingManager, RoutingManager } from './RoutingManager';
 
-const app = express();
-
-app.use(express.json());
+export const DEFAULT_PORT = 3000;
 
 export class Server {
-	port: number | string;
-	app: Express;
-	server: http.Server | undefined;
+	manager: RoutingManager;
+	port: number;
+	server?: http.Server;
 
-	constructor(port: number | string, app: Express) {
+	constructor(manager: RoutingManager, port: number | string | undefined = process.env.node) {
 		const normalizedPort = this.normalizePort(port);
 
-		if (typeof normalizedPort === 'string' || typeof normalizedPort === 'number') {
+		if (typeof normalizedPort == 'number') {
 			this.port = normalizedPort;
 		} else {
-			throw 'Invalid port given!';
+			throw normalizedPort ? ` '${normalizedPort}' is not a valid port!` : 'Invalid port given!';
 		}
 
-		this.app = app;
+		this.manager = manager;
 		this.server = undefined;
 	}
 
 	public async start(): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
-			this.server = this.app.listen(this.port, async () => {
-				await createConnection();
-
-				// const runtimeDir = __dirname.endsWith('src') ? __dirname.substr(0, __dirname.length - 4) : __dirname;
-
-				// this.app.use(express.static(`${runtimeDir}/public`)); // https://expressjs.com/en/starter/static-files.html
-
-				// this.setupRouters(this.app, [IndexRouter, LoginRouter, CourseRouter, CategoryRouter, QuestionRouter, QuizRouter, HomeworkRouter]);
-
-				// this.app.set('view engine', 'pug');
+			this.server = this.manager.app.listen(this.port, async () => {
+				await this.manager.connectDatabase();
 
 				console.log(`Server launched on port ${this.port}!`);
 
@@ -56,52 +35,16 @@ export class Server {
 		});
 	}
 
-	// public setupRouters(initialRouter: Express, routerClasses: { new (): AbstractRouter }[]) {
-	// 	initialRouter.use(cookieParser(), checkCookiesAuth);
-
-	// 	const apiRoutes = Router();
-
-	// 	routerClasses.forEach((routerClass) => {
-	// 		const router: AbstractRouter = new routerClass();
-
-	// 		const routerRootPath = router.getRootPath();
-
-	// 		if (routerRootPath) {
-	// 			initialRouter.use(routerRootPath, router.router);
-	// 		}
-
-	// 		if (router instanceof AbstractApiRouter) {
-	// 			const apiRouter = router as AbstractApiRouter;
-
-	// 			const apiRouterRootPath = apiRouter.getApiRootPath();
-
-	// 			if (apiRouterRootPath) {
-	// 				apiRoutes.use(apiRouterRootPath, apiRouter.apiRouter);
-	// 			}
-	// 		}
-	// 	});
-
-	// 	initialRouter.use(
-	// 		'/api',
-	// 		(req, _res, next) => {
-	// 			req.isApi = true;
-	// 			next();
-	// 		},
-	// 		apiRoutes,
-	// 	);
-
-	// 	initialRouter.use((_req, res) => {
-	// 		return res.status(404).render('error', {
-	// 			error: 'Ce lien ne mène nul part, veuillez réessayer!',
-	// 		});
-	// 	});
-	// }
-
-	public close(): http.Server | undefined {
+	public async close(): Promise<http.Server | undefined> {
+		await this.manager.stop();
 		return this.server?.close();
 	}
 
-	private normalizePort(val: number | string): number | string | boolean {
+	private normalizePort(val?: number | string): number | string | false {
+		if (!val) {
+			return DEFAULT_PORT;
+		}
+
 		const port: number = typeof val === 'string' ? parseInt(val, 10) : val;
 
 		if (isNaN(port)) {
@@ -117,18 +60,18 @@ export class Server {
 		if (error.syscall !== 'listen') {
 			throw error;
 		}
-		
+
 		const bind = typeof port === 'string' ? `Pipe ${port}` : `Port ${port}`;
 
 		switch (error.code) {
-		case 'EACCES':
-			return `${bind} requires elevated privileges`;
-		case 'EADDRINUSE':
-			return `${bind} is already in use`;
-		default:
-			throw error;
+			case 'EACCES':
+				return `${bind} requires elevated privileges`;
+			case 'EADDRINUSE':
+				return `${bind} is already in use`;
+			default:
+				throw error;
 		}
 	}
 }
 
-export default new Server(process.env.PORT || '3000', app);
+export default new Server(createBasicRoutingManager(), process.env.PORT);
