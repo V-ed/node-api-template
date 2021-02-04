@@ -12,8 +12,8 @@ export class RoutingManager {
 		this.app = app;
 	}
 
-	public async connectDatabase(): Promise<Connection> {
-		this.database = await createConnection();
+	public async connectDatabase(connection?: Connection): Promise<Connection> {
+		this.database = connection ?? (await createConnection());
 
 		return this.database;
 	}

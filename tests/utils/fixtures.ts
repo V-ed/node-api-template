@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { createConnection, getRepository } from 'typeorm';
+import { Connection, createConnection, getRepository } from 'typeorm';
 import { Builder, fixturesIterator, Loader, Parser, Resolver } from 'typeorm-fixtures-cli/dist';
 
 /**
@@ -10,7 +10,7 @@ import { Builder, fixturesIterator, Loader, Parser, Resolver } from 'typeorm-fix
  * Example paths :
  * - `${__dirname}/fixtures` - current directory's fixture folder
  */
-export async function loadFixtures(fixturesPath = './fixtures'): Promise<void> {
+export async function loadFixtures(doCloseDatabase = true, fixturesPath = './fixtures'): Promise<Connection> {
 	const connection = await createConnection();
 
 	await connection.synchronize(true);
@@ -22,17 +22,21 @@ export async function loadFixtures(fixturesPath = './fixtures'): Promise<void> {
 	const resolver = new Resolver();
 	const fixtures = resolver.resolve(loader.fixtureConfigs);
 	const builder = new Builder(connection, new Parser());
-	
+
 	const entitiesPromiseMap = [];
-	
+
 	for (const fixture of fixturesIterator(fixtures)) {
 		const entity = await builder.build(fixture);
 		const repo = getRepository(entity.constructor.name);
 
 		entitiesPromiseMap.push(repo.save(entity));
 	}
-	
+
 	await Promise.all(entitiesPromiseMap);
-	
-	await connection.close();
+
+	if (doCloseDatabase) {
+		await connection.close();
+	}
+
+	return connection;
 }
