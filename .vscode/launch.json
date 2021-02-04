@@ -10,7 +10,8 @@
 			"request": "launch",
 			"restart": true,
 			"skipFiles": [
-				"<node_internals>/**"
+				"<node_internals>/**",
+				"${workspaceFolder}/node_modules/**/*.js",
 			],
 			"runtimeExecutable": "npm",
 			"runtimeArgs": [

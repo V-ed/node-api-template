@@ -1,11 +1,9 @@
-import MessageRouter from '$/routers/MessageRouter';
 import server from '$/server';
 import dotenv from 'dotenv';
+import defaultRouters from './routers';
 
 dotenv.config();
 
-const test = new MessageRouter();
-
-server.manager.registerRouter(test);
+server.manager.registerRouter(defaultRouters);
 
 server.start();

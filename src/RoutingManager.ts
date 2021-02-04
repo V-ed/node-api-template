@@ -1,6 +1,8 @@
 import express, { Express } from 'express';
 import { Connection, createConnection } from 'typeorm';
-import type AbstractRouter from './AbstractRouter';
+import AbstractRouter from './AbstractRouter';
+
+export type DefinedRouter = AbstractRouter | { new (): AbstractRouter };
 
 export class RoutingManager {
 	app: Express;
@@ -16,16 +18,15 @@ export class RoutingManager {
 		return this.database;
 	}
 
-	public registerRouter(router: AbstractRouter): void;
-	public registerRouter(routers: AbstractRouter[]): void;
-
-	public registerRouter(routers: AbstractRouter | AbstractRouter[]): void {
+	public registerRouter(routers: DefinedRouter | DefinedRouter[]): void {
 		if (Array.isArray(routers)) {
-			routers.forEach(this.registerRouter);
+			routers.forEach(this.registerRouter.bind(this));
 		} else {
-			const formattedPath = `${routers.path.startsWith('/') ? '' : '/'}${routers.path}`;
+			const definedRouter = routers instanceof AbstractRouter ? routers : new routers();
 
-			this.app.use(formattedPath, routers.routes.router);
+			const formattedPath = `${definedRouter.path.startsWith('/') ? '' : '/'}${definedRouter.path}`;
+
+			this.app.use(formattedPath, definedRouter.routes.router);
 		}
 	}
 
@@ -34,12 +35,16 @@ export class RoutingManager {
 	}
 }
 
-export function createBasicRoutingManager(): RoutingManager {
+export function createBasicRoutingManager(routers?: DefinedRouter | DefinedRouter[]): RoutingManager {
 	const app = express();
 
 	app.use(express.json());
 
 	const manager = new RoutingManager(app);
+
+	if (routers) {
+		manager.registerRouter(routers);
+	}
 
 	return manager;
 }

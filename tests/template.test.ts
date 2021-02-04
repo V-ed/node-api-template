@@ -1,15 +1,18 @@
-import server from 'src/server';
+import defaultRouters from '$/routers';
+import { createBasicRoutingManager } from '$/RoutingManager';
+import supertest from 'supertest';
 import { loadFixtures } from './utils/fixtures';
 
-// const root = `http://localhost:${process.env.PORT}`;
+let request: supertest.SuperTest<supertest.Test>;
 
 beforeAll(async () => {
 	await loadFixtures();
-	await server.start();
-});
 
-afterAll(async () => {
-	await server.close();
+	const router = createBasicRoutingManager(defaultRouters);
+
+	await router.connectDatabase();
+
+	request = supertest(router.app);
 });
 
 describe('Template test', () => {
@@ -18,13 +21,8 @@ describe('Template test', () => {
 	});
 });
 
-// describe('Testing login endpoints', () => {
-// 	it('should return a valid jwt', async () => {
-// 		const res = await axios.post(`${root}/api/login`, {
-// 			username: 'Teacher1',
-// 			password: 'teach',
-// 		});
-
-// 		expect(res.data.token).toEqual(expect.stringMatching(/^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/));
-// 	});
-// });
+describe('Testing messages endpoints', () => {
+	it('should return all messages', async (done) => {
+		request.get('/messages').expect('Content-Type', /json/).expect(200, done);
+	});
+});

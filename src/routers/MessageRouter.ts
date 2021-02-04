@@ -8,12 +8,14 @@ type SendMessageTypeIO = {
 
 export class MessageRouter extends AbstractRouter {
 	get path(): string {
-		return '/';
+		return 'messages';
 	}
 
 	init(routing: ExpressSocketTranslator): void {
-		routing.router.get('/', (_req, res) => {
-			res.send('Hello!');
+		routing.router.get('/', async (_req, res) => {
+			const messages = await Message.find();
+
+			res.json(messages);
 		});
 
 		routing.defineClientHandling((socket) => {
