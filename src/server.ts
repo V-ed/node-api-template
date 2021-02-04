@@ -1,4 +1,4 @@
-import * as http from 'http';
+import type * as http from 'http';
 import { createBasicRoutingManager, RoutingManager } from './RoutingManager';
 
 export const DEFAULT_PORT = 3000;

@@ -1,5 +1,6 @@
-import express, { Express, Router } from 'express';
+import express, { Express } from 'express';
 import { Connection, createConnection } from 'typeorm';
+import type AbstractRouter from './AbstractRouter';
 
 export class RoutingManager {
 	app: Express;
@@ -15,14 +16,16 @@ export class RoutingManager {
 		return this.database;
 	}
 
-	public registerRouter(router: Router): void;
-	public registerRouter(routers: Router[]): void;
+	public registerRouter(router: AbstractRouter): void;
+	public registerRouter(routers: AbstractRouter[]): void;
 
-	public registerRouter(routers: Router | Router[]): void {
+	public registerRouter(routers: AbstractRouter | AbstractRouter[]): void {
 		if (Array.isArray(routers)) {
 			routers.forEach(this.registerRouter);
 		} else {
-			this.app.use(routers);
+			const formattedPath = `${routers.path.startsWith('/') ? '' : '/'}${routers.path}`;
+
+			this.app.use(formattedPath, routers.routes.router);
 		}
 	}
 

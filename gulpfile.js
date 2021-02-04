@@ -3,11 +3,19 @@ const fs = require('fs');
 const rename = require('gulp-rename');
 const replace = require('gulp-replace');
 const del = require('del');
+const ts = require('gulp-typescript');
+const alias = require('gulp-ts-alias').default;
 const gulpEsbuild = require('gulp-esbuild');
 
 // CONFIGS
 
-const buildDest = './dist';
+const tsProject = ts.createProject('./tsconfig.json');
+
+const configs = {
+	buildDest: tsProject.config.compilerOptions.outDir,
+	uploadsFolder: './uploads',
+	devPort: 3005,
+};
 
 // UTILS
 
@@ -30,26 +38,27 @@ function generateGuid() {
 // Build Tasks
 
 function esbuild() {
-	return gulp
-		.src('./src/index.ts')
-		.pipe(
-			gulpEsbuild({
-				platform: 'node',
-				bundle: true,
-				// loader: {
-				// 	'.tsx': 'tsx',
-				// },
-			}),
-		)
-		.pipe(gulp.dest(buildDest));
+	return (
+		tsProject
+			.src()
+			// @ts-ignore
+			// .pipe(alias({ configuration: tsProject.config }))
+			.pipe(
+				gulpEsbuild({
+					platform: 'node',
+					// bundle: true,
+				}),
+			)
+			.pipe(gulp.dest(configs.buildDest))
+	);
 }
 
 function buildPackage() {
-	return gulp.src('./package.json').pipe(replace('dist/index.js', 'index.js')).pipe(gulp.dest(buildDest));
+	return gulp.src('./package.json').pipe(replace('dist/main.js', 'main.js')).pipe(gulp.dest(configs.buildDest));
 }
 
 function buildEnv() {
-	return gulp.src('./.env', { dot: true }).pipe(gulp.dest(buildDest));
+	return gulp.src('./.env', { dot: true }).pipe(replace('src/', '')).pipe(replace('*.ts', '*.js')).pipe(gulp.dest(configs.buildDest));
 }
 
 // Creation Tasks
@@ -63,7 +72,7 @@ function setupMainEnv() {
 			.pipe(rename('.env'))
 			.pipe(gulp.dest('.'));
 	}
-	
+
 	return Promise.resolve();
 }
 
@@ -72,23 +81,23 @@ function setupTestEnv(cb) {
 		return gulp
 			.src('./.env.example')
 			.pipe(replace('MY_RANDOM_KEY', generateGuid()))
-			.pipe(replace('PORT=', 'PORT=3005'))
+			.pipe(replace('PORT=', `PORT=${configs.devPort}`))
 			.pipe(replace('tmp/database.sqlite', ':memory:'))
 			.pipe(rename('.env.test'))
 			.pipe(gulp.dest('.'));
 	}
-	
+
 	return Promise.resolve();
 }
 
 // Delete tasks
 
 function deleteDist() {
-	return del([buildDest]);
+	return del([configs.buildDest]);
 }
 
 function deleteUploads() {
-	return del(['uploads']);
+	return del([configs.uploadsFolder]);
 }
 
 function deleteDatabase() {

@@ -8,24 +8,16 @@
 			"name": "Debug App",
 			"type": "node",
 			"request": "launch",
+			"restart": true,
 			"skipFiles": [
-				"<node_internals>/**",
-				"${workspaceFolder}/node_modules/**/*.js",
+				"<node_internals>/**"
 			],
+			"runtimeExecutable": "npm",
 			"runtimeArgs": [
-				"--nolazy",
-				"-r",
-				"ts-node/register"
+				"run",
+				"dev"
 			],
-			"args": [
-				"${workspaceFolder}/src/index.ts"
-			],
-			"cwd": "${workspaceRoot}",
-			"sourceMaps": true,
-			"protocol": "inspector",
-			"env": {
-				"TS_NODE_IGNORE": "false",
-			}
+			"console": "internalConsole"
 		},
 		{
 			"type": "node",
