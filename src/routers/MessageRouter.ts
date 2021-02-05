@@ -18,7 +18,7 @@ export class MessageRouter extends AbstractRouter {
 			res.json(messages);
 		});
 
-		routing.defineClientHandling((socket) => {
+		routing.defineClientHandling((socket, io) => {
 			socket.on('send_message', async ({ username, message }: SendMessageTypeIO) => {
 				const messageEnt = new Message();
 
@@ -27,7 +27,9 @@ export class MessageRouter extends AbstractRouter {
 
 				await messageEnt.save();
 
-				routing.io.emit('send_message', { username, message });
+				console.log(messageEnt);
+
+				io.emit('send_message', { username, message });
 			});
 		});
 	}

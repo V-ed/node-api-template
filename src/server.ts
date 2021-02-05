@@ -1,4 +1,5 @@
 import type * as http from 'http';
+import { Server as SocketIOServer } from 'socket.io';
 import { createBasicRoutingManager, RoutingManager } from './RoutingManager';
 
 export const DEFAULT_PORT = 3000;
@@ -7,6 +8,7 @@ export class Server {
 	manager: RoutingManager;
 	port: number;
 	server?: http.Server;
+	io?: SocketIOServer;
 
 	constructor(manager: RoutingManager, port: number | string | undefined = process.env.node) {
 		const normalizedPort = this.normalizePort(port);
@@ -32,6 +34,13 @@ export class Server {
 			});
 
 			this.server.on('error', (e) => reject(this.onError(e, this.port)));
+
+			this.io = new SocketIOServer(this.server, {
+				cors: {
+					origin: '*',
+				},
+			});
+			this.manager.setIO(this.io);
 		});
 	}
 

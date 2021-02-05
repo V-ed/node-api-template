@@ -1,4 +1,6 @@
+import cors from 'cors';
 import express, { Express } from 'express';
+import type { Server } from 'socket.io';
 import { Connection, createConnection } from 'typeorm';
 import AbstractRouter from './AbstractRouter';
 
@@ -7,6 +9,10 @@ export type DefinedRouter = AbstractRouter | { new (): AbstractRouter };
 export class RoutingManager {
 	app: Express;
 	database?: Connection;
+
+	routers: AbstractRouter[] = [];
+
+	#io?: Server;
 
 	constructor(app: Express) {
 		this.app = app;
@@ -26,8 +32,19 @@ export class RoutingManager {
 
 			const formattedPath = `${definedRouter.path.startsWith('/') ? '' : '/'}${definedRouter.path}`;
 
+			definedRouter.routes.io = this.#io;
+			this.routers.push(definedRouter);
+
 			this.app.use(formattedPath, definedRouter.routes.router);
 		}
+	}
+
+	public setIO(io: Server): this {
+		this.routers.forEach((router) => (router.routes.io = io));
+
+		this.#io = io;
+
+		return this;
 	}
 
 	public async stop(): Promise<void> {
@@ -38,6 +55,8 @@ export class RoutingManager {
 export function createBasicRoutingManager(routers?: DefinedRouter | DefinedRouter[]): RoutingManager {
 	const app = express();
 
+	app.use(cors({ origin: true }));
+	app.options('*', cors);
 	app.use(express.json());
 
 	const manager = new RoutingManager(app);
