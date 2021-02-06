@@ -5,7 +5,7 @@ const replace = require('gulp-replace');
 const del = require('del');
 const ts = require('gulp-typescript');
 const alias = require('gulp-ts-alias').default;
-const gulpEsbuild = require('gulp-esbuild');
+// const { pipedGulpEsbuild } = require('gulp-esbuild');
 
 // CONFIGS
 
@@ -42,23 +42,30 @@ function esbuild() {
 		tsProject
 			.src()
 			// @ts-ignore
-			// .pipe(alias({ configuration: tsProject.config }))
-			.pipe(
-				gulpEsbuild({
-					platform: 'node',
-					// bundle: true,
-				}),
-			)
+			.pipe(alias({ configuration: tsProject.config }))
+			// .pipe(replace(/(import .+ from (?:'|")\.{1,2}\/.+)((?:'|"))/g, '$1.js$2'))
+			// .pipe(
+			// 	pipedGulpEsbuild({
+			// 		platform: 'node',
+			// 		// bundle: true,
+			// 	}),
+			// )
 			.pipe(gulp.dest(configs.buildDest))
 	);
 }
 
 function buildPackage() {
-	return gulp.src('./package.json').pipe(replace('dist/main.js', 'main.js')).pipe(gulp.dest(configs.buildDest));
+	return (
+		gulp
+			.src('./package.json')
+			// .pipe(replace('dist/main.js', 'main.js'))
+			// .pipe(replace('"type": "commonjs"', '"type": "module"'))
+			.pipe(gulp.dest(configs.buildDest))
+	);
 }
 
 function buildEnv() {
-	return gulp.src('./.env', { dot: true }).pipe(replace('src/', '')).pipe(replace('*.ts', '*.js')).pipe(gulp.dest(configs.buildDest));
+	return gulp.src('./.env', { dot: true }).pipe(replace('src/', '')).pipe(gulp.dest(configs.buildDest));
 }
 
 // Creation Tasks
@@ -76,7 +83,7 @@ function setupMainEnv() {
 	return Promise.resolve();
 }
 
-function setupTestEnv(cb) {
+function setupTestEnv() {
 	if (!fs.existsSync('.env.test')) {
 		return gulp
 			.src('./.env.example')
@@ -106,12 +113,12 @@ function deleteDatabase() {
 
 // Deprecation Tasks
 
+const files = ['./tmp/**/*', '!./tmp/**/backup', '!./tmp/**/backup/**/*'];
+
 function deprecateTmp() {
 	const time = Date.now();
 
-	const files = ['./tmp/**/*', '!./tmp/**/backup', '!./tmp/**/backup/**/*'];
-
-	gulp
+	return gulp
 		.src(files)
 		.pipe(
 			rename(function (path) {
@@ -120,7 +127,9 @@ function deprecateTmp() {
 			}),
 		)
 		.pipe(gulp.dest('./tmp'));
+}
 
+function deleteTmp() {
 	return del(files);
 }
 
@@ -130,10 +139,12 @@ const setupEnvs = gulp.parallel(setupMainEnv, setupTestEnv);
 
 const build = gulp.parallel(buildEnv, buildPackage, esbuild);
 
+const handleTmp = gulp.series(deprecateTmp, deleteTmp);
+
 // EXPORTS
 
 exports.build = build;
 
-exports.cleanbuild = gulp.series(gulp.parallel(deleteDist, deprecateTmp, setupEnvs), build);
+exports.cleanbuild = gulp.series(gulp.parallel(deleteDist, handleTmp, setupEnvs), build);
 
 exports.cleandb = gulp.parallel(deleteDatabase);
