@@ -8,9 +8,7 @@ type SendMessageTypeIO = {
 };
 
 export class MessageRouter extends AbstractRouter {
-	get path(): string {
-		return 'messages';
-	}
+	public path = 'messages';
 
 	init(): void {
 		this.router.get('/', async (_req, res) => {

@@ -20,11 +20,14 @@ export abstract class AbstractRouter {
 		this.init(this.router);
 	}
 
-	abstract get path(): string;
+	/**
+	 * This defines the root path of this router.
+	 */
+	public abstract path: string;
 
-	abstract init(router: Router): void;
+	protected abstract init(router: Router): void;
 
-	initSocket?(socket: Socket, io: Server): void;
+	protected initSocket?(socket: Socket, io: Server): void;
 }
 
 export default AbstractRouter;
