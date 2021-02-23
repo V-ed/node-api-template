@@ -1,20 +1,16 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Entity, PrimaryKey, Property } from '@mikro-orm/core';
 
-@Entity({
-	name: 'messages',
-})
-export class Message extends BaseEntity {
-	@PrimaryGeneratedColumn()
+@Entity()
+export class Message extends BaseEntity<Message, 'id'> {
+	@PrimaryKey()
 	public id!: number;
 
-	@Column()
+	@Property()
 	public username!: string;
 
-	@Column()
+	@Property()
 	public message!: string;
 
-	@Column({ type: 'time', default: () => `datetime('now', 'localtime')` })
-	public time!: string;
+	@Property()
+	public time = new Date();
 }
-
-export default Message;

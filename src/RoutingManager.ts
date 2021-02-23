@@ -1,14 +1,16 @@
+import { EntityManager, MikroORM, RequestContext } from '@mikro-orm/core';
+import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import cors from 'cors';
 import express, { Express } from 'express';
 import type { Server } from 'socket.io';
-import { Connection, createConnection } from 'typeorm';
 import AbstractRouter from './AbstractRouter';
 
 export type DefinedRouter = AbstractRouter | { new (): AbstractRouter };
 
 export class RoutingManager {
 	app: Express;
-	database?: Connection;
+	database?: MikroORM;
+	em?: EntityManager;
 
 	routers: AbstractRouter[] = [];
 
@@ -18,8 +20,29 @@ export class RoutingManager {
 		this.app = app;
 	}
 
-	public async connectDatabase(connection?: Connection): Promise<Connection> {
-		this.database = connection ?? (await createConnection());
+	public createDefaultDatabase(): Promise<MikroORM> {
+		return MikroORM.init(
+			{
+				metadataProvider: TsMorphMetadataProvider,
+				entities: ['./dist/entities/**/*.js'],
+				entitiesTs: ['./src/entities/**/*.ts'],
+				tsNode: true,
+				dbName: 'database',
+				type: 'sqlite',
+			},
+			false,
+		);
+	}
+
+	public async connectDatabase(connection?: MikroORM): Promise<MikroORM> {
+		this.database = connection ?? (await this.createDefaultDatabase());
+
+		this.em = this.database.em;
+
+		this.routers.forEach((router) => {
+			router.database = this.database;
+			router.em = this.em;
+		});
 
 		return this.database;
 	}
@@ -60,6 +83,13 @@ export function createBasicRoutingManager(routers?: DefinedRouter | DefinedRoute
 	app.use(express.json());
 
 	const manager = new RoutingManager(app);
+
+	manager.app.use((_req, _res, next) => {
+		if (!manager.em) {
+			throw `Entity manager not initialized yet, don't forget to connect to the database before letting requests flow in!`;
+		}
+		RequestContext.create(manager.em, next);
+	});
 
 	if (routers) {
 		manager.registerRouter(routers);

@@ -1,21 +1,22 @@
 import defaultRouters from '$/routers';
 import { createBasicRoutingManager } from '$/RoutingManager';
+import type { MikroORM } from '@mikro-orm/core';
 import supertest from 'supertest';
-import { getConnection } from 'typeorm';
 import { loadFixtures } from './utils/fixtures';
 
+let database: MikroORM | undefined = undefined;
 let request: supertest.SuperTest<supertest.Test>;
 
 beforeAll(async () => {
 	const router = createBasicRoutingManager(defaultRouters);
 
-	await router.connectDatabase(await loadFixtures(false));
+	database = await router.connectDatabase(await loadFixtures(false));
 
 	request = supertest(router.app);
 });
 
 afterAll(() => {
-	return getConnection().close();
+	return database?.close();
 });
 
 describe('Template test', () => {

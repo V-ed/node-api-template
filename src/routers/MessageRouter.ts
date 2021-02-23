@@ -1,5 +1,5 @@
 import AbstractRouter from '$/AbstractRouter';
-import Message from '$orm/Message';
+import { Message } from '$orm/Message';
 import type { Server, Socket } from 'socket.io';
 
 type SendMessageTypeIO = {
@@ -14,7 +14,7 @@ export class MessageRouter extends AbstractRouter {
 
 	init(): void {
 		this.router.get('/', async (_req, res) => {
-			const messages = await Message.find();
+			const messages = await this.em?.find(Message, {});
 
 			res.json(messages);
 		});
@@ -27,7 +27,7 @@ export class MessageRouter extends AbstractRouter {
 			messageEnt.username = username;
 			messageEnt.message = message;
 
-			await messageEnt.save();
+			await this.em?.persistAndFlush(messageEnt);
 
 			console.log(messageEnt);
 

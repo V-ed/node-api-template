@@ -1,8 +1,11 @@
+import type { EntityManager, MikroORM } from '@mikro-orm/core';
 import { Router } from 'express';
 import type { Server, Socket } from 'socket.io';
 
 export abstract class AbstractRouter {
 	public router: Router;
+	public database?: MikroORM;
+	public em?: EntityManager;
 
 	#io?: Server;
 	get io(): Server | undefined {
