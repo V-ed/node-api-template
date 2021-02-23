@@ -1,10 +1,6 @@
 import { Router } from 'express';
 import type { Server, Socket } from 'socket.io';
 
-export interface AbstractRouter {
-	initSocket?(socket: Socket, io: Server): void;
-}
-
 export abstract class AbstractRouter {
 	public router: Router;
 
@@ -27,6 +23,8 @@ export abstract class AbstractRouter {
 	abstract get path(): string;
 
 	abstract init(router: Router): void;
+
+	initSocket?(socket: Socket, io: Server): void;
 }
 
 export default AbstractRouter;
