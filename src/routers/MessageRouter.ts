@@ -1,5 +1,6 @@
-import AbstractRouter, { ExpressSocketTranslator } from '$/AbstractRouter';
+import AbstractRouter from '$/AbstractRouter';
 import Message from '$orm/Message';
+import type { Server, Socket } from 'socket.io';
 
 type SendMessageTypeIO = {
 	username: string;
@@ -11,26 +12,26 @@ export class MessageRouter extends AbstractRouter {
 		return 'messages';
 	}
 
-	init(routing: ExpressSocketTranslator): void {
-		routing.router.get('/', async (_req, res) => {
+	init(): void {
+		this.router.get('/', async (_req, res) => {
 			const messages = await Message.find();
 
 			res.json(messages);
 		});
+	}
 
-		routing.defineClientHandling((socket, io) => {
-			socket.on('send_message', async ({ username, message }: SendMessageTypeIO) => {
-				const messageEnt = new Message();
+	initSocket(socket: Socket, io: Server): void {
+		socket.on('send_message', async ({ username, message }: SendMessageTypeIO) => {
+			const messageEnt = new Message();
 
-				messageEnt.username = username;
-				messageEnt.message = message;
+			messageEnt.username = username;
+			messageEnt.message = message;
 
-				await messageEnt.save();
+			await messageEnt.save();
 
-				console.log(messageEnt);
+			console.log(messageEnt);
 
-				io.emit('send_message', { username, message });
-			});
+			io.emit('send_message', { username, message });
 		});
 	}
 }

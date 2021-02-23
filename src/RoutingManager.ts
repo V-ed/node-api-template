@@ -32,15 +32,15 @@ export class RoutingManager {
 
 			const formattedPath = `${definedRouter.path.startsWith('/') ? '' : '/'}${definedRouter.path}`;
 
-			definedRouter.routes.io = this.#io;
+			definedRouter.io = this.#io;
 			this.routers.push(definedRouter);
 
-			this.app.use(formattedPath, definedRouter.routes.router);
+			this.app.use(formattedPath, definedRouter.router);
 		}
 	}
 
 	public setIO(io: Server): this {
-		this.routers.forEach((router) => (router.routes.io = io));
+		this.routers.forEach((router) => (router.io = io));
 
 		this.#io = io;
 

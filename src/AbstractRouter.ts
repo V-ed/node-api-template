@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import type { Server, Socket } from 'socket.io';
 
-export class ExpressSocketTranslator {
-	public router: Router;
+export interface AbstractRouter {
+	initSocket?(socket: Socket, io: Server): void;
+}
 
-	private onNewClient?: (socket: Socket, io: Server) => void;
+export abstract class AbstractRouter {
+	public router: Router;
 
 	#io?: Server;
 	get io(): Server | undefined {
@@ -13,30 +15,18 @@ export class ExpressSocketTranslator {
 	set io(io: Server | undefined) {
 		this.#io?.close();
 		this.#io = io;
-		this.#io?.on('connection', (socket: Socket) => this.onNewClient?.(socket, this.#io!));
+		this.#io?.on('connection', (socket: Socket) => this.initSocket?.(socket, this.#io!));
 	}
-
-	constructor(router: Router, io?: Server) {
-		this.router = router;
-		this.io = io;
-	}
-
-	public defineClientHandling(onNewClient: (socket: Socket, io: Server) => void): void {
-		this.onNewClient = onNewClient;
-	}
-}
-
-export abstract class AbstractRouter {
-	public routes: ExpressSocketTranslator;
-	abstract get path(): string;
 
 	constructor() {
-		this.routes = new ExpressSocketTranslator(Router());
+		this.router = Router();
 
-		this.init(this.routes);
+		this.init(this.router);
 	}
 
-	abstract init(routes: ExpressSocketTranslator): void;
+	abstract get path(): string;
+
+	abstract init(router: Router): void;
 }
 
 export default AbstractRouter;
