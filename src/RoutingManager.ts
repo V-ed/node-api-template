@@ -14,11 +14,9 @@ export class RoutingManager {
 		this.app = app;
 	}
 
-	public registerRouter(routers: DefinedRouter | DefinedRouter[]): void {
-		if (Array.isArray(routers)) {
-			routers.forEach(this.registerRouter.bind(this));
-		} else {
-			const definedRouter = routers instanceof AbstractRouter ? routers : new routers();
+	public registerRouters(...routers: DefinedRouter[]): void {
+		routers.forEach((router) => {
+			const definedRouter = router instanceof AbstractRouter ? router : new router();
 
 			const formattedPath = `${definedRouter.path.startsWith('/') ? '' : '/'}${definedRouter.path}`;
 
@@ -26,7 +24,7 @@ export class RoutingManager {
 			this.routers.push(definedRouter);
 
 			this.app.use(formattedPath, definedRouter.router);
-		}
+		});
 	}
 
 	public setIO(io: Server): this {
@@ -42,7 +40,7 @@ export class RoutingManager {
 	}
 }
 
-export function createBasicRoutingManager(routers?: DefinedRouter | DefinedRouter[]): RoutingManager {
+export function createBasicRoutingManager(...routers: DefinedRouter[]): RoutingManager {
 	const app = express();
 
 	app.use(cors({ origin: true }));
@@ -52,7 +50,7 @@ export function createBasicRoutingManager(routers?: DefinedRouter | DefinedRoute
 	const manager = new RoutingManager(app);
 
 	if (routers) {
-		manager.registerRouter(routers);
+		manager.registerRouters(...routers);
 	}
 
 	return manager;

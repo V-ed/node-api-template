@@ -7,7 +7,7 @@ import { importFixtures } from '../prisma/seeder';
 let request: supertest.SuperTest<supertest.Test>;
 
 beforeAll(async () => {
-	const router = createBasicRoutingManager(defaultRouters);
+	const router = createBasicRoutingManager(...defaultRouters);
 
 	await importFixtures(prisma, `${__dirname}/fixtures`, false);
 
