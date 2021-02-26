@@ -25,8 +25,20 @@ export abstract class AbstractRouter {
 	 */
 	public abstract path: string;
 
+	/**
+	 * Inits the Express Router under the `path` value.
+	 *
+	 * @param router Alias to `this.router`.
+	 */
 	protected abstract init(router: Router): void;
 
+	/**
+	 * Function that initialize every single socket that connects to this application.
+	 * The `path` value is not used here, so any event that this function initializes is done so globally.
+	 *
+	 * @param socket The `Socket.IO`'s user socket. This socket includes the connected user's data and is expected to deal with handling real time interactions.
+	 * @param io The `Socket.IO`'s io server containing all sockets and function that can emit data to connected users.
+	 */
 	protected initSocket?(socket: Socket, io: Server): void;
 }
 
