@@ -1,5 +1,4 @@
 import { prisma } from '$/database';
-import defaultRouters from '$/routers';
 import { createBasicRoutingManager } from '$/RoutingManager';
 import supertest from 'supertest';
 import { importFixtures } from '../prisma/seeder';
@@ -7,7 +6,7 @@ import { importFixtures } from '../prisma/seeder';
 let request: supertest.SuperTest<supertest.Test>;
 
 beforeAll(async () => {
-	const router = createBasicRoutingManager(...defaultRouters);
+	const router = createBasicRoutingManager(true);
 
 	await importFixtures(prisma, `${__dirname}/fixtures`, false);
 

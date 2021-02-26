@@ -1,5 +1,7 @@
 import cors from 'cors';
 import express, { Express } from 'express';
+import path from 'path';
+import readdir from 'recursive-readdir';
 import type { Server } from 'socket.io';
 import AbstractRouter from './AbstractRouter';
 
@@ -12,6 +14,22 @@ export class RoutingManager {
 
 	constructor(app: Express) {
 		this.app = app;
+	}
+
+	public async autoRegisterRouters(routersFolderPath = './src/routers'): Promise<void> {
+		const fullDirPath = path.resolve(routersFolderPath);
+
+		const filePaths = await readdir(fullDirPath, ['!*.+(ts|js)']);
+
+		const defaultImports: unknown[] = await Promise.all(filePaths.map(async (filePath) => (await import(filePath)).default));
+
+		const routers: AbstractRouter[] = defaultImports
+			.filter((commandInstance) => {
+				return typeof commandInstance == 'function' && commandInstance.prototype instanceof AbstractRouter;
+			})
+			.map((commandInstance) => commandInstance as AbstractRouter);
+
+		return this.registerRouters(...routers);
 	}
 
 	public registerRouters(...routers: DefinedRouter[]): void {
@@ -40,7 +58,11 @@ export class RoutingManager {
 	}
 }
 
-export function createBasicRoutingManager(...routers: DefinedRouter[]): RoutingManager {
+export function createBasicRoutingManager(routersFolderPath?: string): RoutingManager;
+export function createBasicRoutingManager(routers?: DefinedRouter[]): RoutingManager;
+export function createBasicRoutingManager(doDiscoverRoutersAutomatically: boolean): RoutingManager;
+
+export function createBasicRoutingManager(routersOrAuto?: boolean | string | DefinedRouter[]): RoutingManager {
 	const app = express();
 
 	app.use(cors({ origin: true }));
@@ -49,8 +71,10 @@ export function createBasicRoutingManager(...routers: DefinedRouter[]): RoutingM
 
 	const manager = new RoutingManager(app);
 
-	if (routers) {
-		manager.registerRouters(...routers);
+	if (Array.isArray(routersOrAuto)) {
+		manager.registerRouters(...routersOrAuto);
+	} else if (routersOrAuto) {
+		manager.autoRegisterRouters(typeof routersOrAuto == 'string' ? routersOrAuto : undefined);
 	}
 
 	return manager;
