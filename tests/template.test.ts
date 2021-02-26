@@ -1,21 +1,21 @@
+import { prisma } from '$/database';
 import defaultRouters from '$/routers';
 import { createBasicRoutingManager } from '$/RoutingManager';
 import supertest from 'supertest';
-import { getConnection } from 'typeorm';
-import { loadFixtures } from './utils/fixtures';
+import { importFixtures } from '../prisma/seeder';
 
 let request: supertest.SuperTest<supertest.Test>;
 
 beforeAll(async () => {
 	const router = createBasicRoutingManager(defaultRouters);
 
-	await router.connectDatabase(await loadFixtures(false));
+	await importFixtures(prisma, `${__dirname}/fixtures`, false);
 
 	request = supertest(router.app);
 });
 
 afterAll(() => {
-	return getConnection().close();
+	return prisma.$disconnect();
 });
 
 describe('Template test', () => {

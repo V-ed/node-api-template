@@ -61,5 +61,11 @@
 		"rules": {
 			"@typescript-eslint/no-magic-numbers": "off"
 		}
+	},
+	{
+		"files": "prisma/**/*.ts",
+		"rules": {
+			"@typescript-eslint/no-magic-numbers": "off"
+		}
 	}]
 }

@@ -1,5 +1,6 @@
 import AbstractRouter from '$/AbstractRouter';
-import Message from '$orm/Message';
+import { MessageController } from '$/controllers/MessageController';
+import { prisma } from '$/database';
 import type { Server, Socket } from 'socket.io';
 
 type SendMessageTypeIO = {
@@ -12,24 +13,25 @@ export class MessageRouter extends AbstractRouter {
 
 	init(): void {
 		this.router.get('/', async (_req, res) => {
-			const messages = await Message.find();
+			const messages = await prisma.message.findMany({ include: { user: true } });
 
 			res.json(messages);
+		});
+
+		this.router.post('/', async (req, res) => {
+			const { username, message } = req.body;
+
+			const newMessage = await MessageController.createMessage({ username, message });
+
+			res.json({ user: newMessage.user, message: newMessage.message });
 		});
 	}
 
 	initSocket(socket: Socket, io: Server): void {
-		socket.on('send_message', async ({ username, message }: SendMessageTypeIO) => {
-			const messageEnt = new Message();
+		socket.on('send_message', async (data: SendMessageTypeIO) => {
+			const newMessage = await MessageController.createMessage(data);
 
-			messageEnt.username = username;
-			messageEnt.message = message;
-
-			await messageEnt.save();
-
-			console.log(messageEnt);
-
-			io.emit('send_message', { username, message });
+			io.emit('send_message', { user: newMessage.user, message: newMessage.message });
 		});
 	}
 }

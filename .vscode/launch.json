@@ -43,7 +43,8 @@
 			"program": "${workspaceFolder}/node_modules/.bin/jest",
 			"args": [
 				"--runInBand",
-				"--silent"
+				"--silent",
+				"--detectOpenHandles"
 			],
 			"console": "internalConsole",
 			"disableOptimisticBPs": true,

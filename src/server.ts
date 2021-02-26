@@ -26,13 +26,10 @@ export class Server {
 	public async start(): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
 			this.server = this.manager.app.listen(this.port, async () => {
-				await this.manager.connectDatabase();
-
 				console.log(`Server launched on port ${this.port}!`);
-
-				resolve();
 			});
 
+			this.server.on('close', resolve);
 			this.server.on('error', (e) => reject(this.onError(e, this.port)));
 
 			this.io = new SocketIOServer(this.server, {

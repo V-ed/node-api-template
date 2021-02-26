@@ -1,9 +1,0 @@
-entity: Message
-items:
-  message{1..3}:
-    id: ($current)
-    username: 'User($current)'
-    message: '{{random.words(4)}}'
-    # __call:
-    #   setPassword:
-    #     - 'teach'

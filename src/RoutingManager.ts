@@ -1,27 +1,17 @@
 import cors from 'cors';
 import express, { Express } from 'express';
 import type { Server } from 'socket.io';
-import { Connection, createConnection } from 'typeorm';
 import AbstractRouter from './AbstractRouter';
 
 export type DefinedRouter = AbstractRouter | { new (): AbstractRouter };
 
 export class RoutingManager {
 	app: Express;
-	database?: Connection;
-
 	routers: AbstractRouter[] = [];
-
 	#io?: Server;
 
 	constructor(app: Express) {
 		this.app = app;
-	}
-
-	public async connectDatabase(connection?: Connection): Promise<Connection> {
-		this.database = connection ?? (await createConnection());
-
-		return this.database;
 	}
 
 	public registerRouter(routers: DefinedRouter | DefinedRouter[]): void {
@@ -48,7 +38,7 @@ export class RoutingManager {
 	}
 
 	public async stop(): Promise<void> {
-		return this.database?.close();
+		return this.#io?.close();
 	}
 }
 
