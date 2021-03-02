@@ -10,7 +10,7 @@ export class Server {
 	server?: http.Server;
 	io?: SocketIOServer;
 
-	constructor(manager: RoutingManager, port: number | string | undefined = process.env.node) {
+	constructor(manager: RoutingManager = createBasicRoutingManager(), port: number | string | undefined = process.env.PORT) {
 		const normalizedPort = this.normalizePort(port);
 
 		if (typeof normalizedPort == 'number') {
@@ -33,6 +33,7 @@ export class Server {
 			this.server.on('error', (e) => reject(this.onError(e, this.port)));
 
 			this.io = new SocketIOServer(this.server, {
+				transports: ['websocket'],
 				cors: {
 					origin: '*',
 				},
@@ -80,4 +81,4 @@ export class Server {
 	}
 }
 
-export default new Server(createBasicRoutingManager(), process.env.PORT);
+export default new Server();
