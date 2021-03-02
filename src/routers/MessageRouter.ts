@@ -1,6 +1,8 @@
 import AbstractRouter from '$/AbstractRouter';
 import { MessageController } from '$/controllers/MessageController';
 import { prisma } from '$/database';
+import { validate } from '$/validator';
+import { messageChain } from '$/validators/MessageValidator';
 import type { Server, Socket } from 'socket.io';
 
 type SendMessageTypeIO = {
@@ -18,12 +20,16 @@ export class MessageRouter extends AbstractRouter {
 			res.json(messages);
 		});
 
-		this.router.post('/', async (req, res) => {
+		this.router.post('/', validate(messageChain), async (req, res) => {
 			const { username, message } = req.body;
 
 			const newMessage = await MessageController.createMessage({ username, message });
 
-			res.json({ user: newMessage.user, message: newMessage.message });
+			const sendableMessage = { user: newMessage.user, message: newMessage.message };
+
+			res.json(sendableMessage);
+
+			this.io?.emit('send_message', sendableMessage);
 		});
 	}
 
