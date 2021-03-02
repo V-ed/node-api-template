@@ -1,5 +1,6 @@
 dist
 
 gulpfile.js
+gulpfile.ts
 
 jest.config.js

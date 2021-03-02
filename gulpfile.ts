@@ -1,14 +1,15 @@
-const gulp = require('gulp');
-const fs = require('fs');
-const rename = require('gulp-rename');
-const replace = require('gulp-replace');
-const del = require('del');
-const ts = require('gulp-typescript');
-const alias = require('gulp-ts-alias').default;
-const path = require('path');
+import { exec as execCallback } from 'child_process';
+import del from 'del';
+import fs from 'fs';
+import gulp from 'gulp';
+import rename from 'gulp-rename';
+import replace from 'gulp-replace';
+import alias from 'gulp-ts-alias';
+import ts from 'gulp-typescript';
+import path from 'path';
+import util from 'util';
 
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
+const exec = util.promisify(execCallback);
 // const { pipedGulpEsbuild } = require('gulp-esbuild');
 
 // CONFIGS
@@ -49,8 +50,7 @@ function buildTypescript() {
 	return (
 		tsProject
 			.src()
-			// @ts-ignore
-			.pipe(alias({ configuration: tsProject.config }))
+			.pipe(alias({ configuration: { ...{ compilerOptions: {} }, ...tsProject.config } }))
 			// .pipe(replace(/(import .+ from (?:'|")\.{1,2}\/.+)((?:'|"))/g, '$1.js$2'))
 			// .pipe(
 			// 	pipedGulpEsbuild({
@@ -135,12 +135,12 @@ function deleteDist() {
 	return del([configs.buildDest]);
 }
 
-function deleteUploads() {
-	return del([configs.uploadsFolder]);
-}
+// function deleteUploads() {
+// 	return del([configs.uploadsFolder]);
+// }
 
 function deleteDatabase() {
-	return del([configs.dbPath]);
+	return del([configs.dbDevPath]);
 }
 
 // Deprecation Tasks
