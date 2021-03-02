@@ -9,8 +9,12 @@ export type DefinedRouter = AbstractRouter | { new (): AbstractRouter };
 
 export class RoutingManager {
 	app: Express;
-	routers: AbstractRouter[] = [];
 	#io?: Server;
+
+	#routers: AbstractRouter[] = [];
+	get routers(): readonly AbstractRouter[] {
+		return this.#routers;
+	}
 
 	constructor(app: Express) {
 		this.app = app;
@@ -49,7 +53,7 @@ export class RoutingManager {
 			const formattedPath = `${definedRouter.path.startsWith('/') ? '' : '/'}${definedRouter.path}`;
 
 			definedRouter.io = this.#io;
-			this.routers.push(definedRouter);
+			this.#routers.push(definedRouter);
 
 			this.app.use(formattedPath, definedRouter.router);
 		});
