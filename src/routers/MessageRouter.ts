@@ -1,7 +1,7 @@
 import AbstractRouter from '$/AbstractRouter';
 import { MessageController } from '$/controllers/MessageController';
 import { prisma } from '$/database';
-import type { Server, Socket } from 'socket.io';
+import type WebSocket from 'ws';
 
 type SendMessageTypeIO = {
 	username: string;
@@ -27,11 +27,11 @@ export class MessageRouter extends AbstractRouter {
 		});
 	}
 
-	initSocket(socket: Socket, io: Server): void {
+	initSocket(socket: WebSocket): void {
 		socket.on('send_message', async (data: SendMessageTypeIO) => {
 			const newMessage = await MessageController.createMessage(data);
 
-			io.emit('send_message', { user: newMessage.user, message: newMessage.message });
+			this.wss.emit('send_message', { user: newMessage.user, message: newMessage.message });
 		});
 	}
 }

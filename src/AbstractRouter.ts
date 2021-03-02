@@ -1,17 +1,18 @@
 import { Router } from 'express';
-import type { Server, Socket } from 'socket.io';
+import type { IncomingMessage } from 'http';
+import type WebSocket from 'ws';
 
 export abstract class AbstractRouter {
 	public router: Router;
 
-	#io?: Server;
-	get io(): Server | undefined {
-		return this.#io;
+	#wss!: WebSocket.Server;
+	get wss(): WebSocket.Server {
+		return this.#wss;
 	}
-	set io(io: Server | undefined) {
-		this.#io?.close();
-		this.#io = io;
-		this.#io?.on('connection', (socket: Socket) => this.initSocket?.(socket, this.#io!));
+	set wss(io: WebSocket.Server) {
+		this.#wss?.close();
+		this.#wss = io;
+		this.#wss?.on('connection', (socket: WebSocket, request: IncomingMessage) => this.initSocket?.(socket, request));
 	}
 
 	constructor() {
@@ -36,10 +37,10 @@ export abstract class AbstractRouter {
 	 * Function that initialize every single socket that connects to this application.
 	 * The `path` value is not used here, so any event that this function initializes is done so globally.
 	 *
-	 * @param socket The `Socket.IO`'s user socket. This socket includes the connected user's data and is expected to deal with handling real time interactions.
-	 * @param io The `Socket.IO`'s io server containing all sockets and function that can emit data to connected users.
+	 * @param socket The user web socket. This socket includes the connected user's data and is expected to deal with handling real time interactions.
+	 * @param request The incoming message made based from the WebSocket.
 	 */
-	protected initSocket?(socket: Socket, io: Server): void;
+	protected initSocket?(socket: WebSocket, request: IncomingMessage): void;
 }
 
 export default AbstractRouter;

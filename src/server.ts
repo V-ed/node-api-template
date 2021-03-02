@@ -1,5 +1,5 @@
 import type * as http from 'http';
-import { Server as SocketIOServer } from 'socket.io';
+import WebSocket from 'ws';
 import { createBasicRoutingManager, RoutingManager } from './RoutingManager';
 
 export const DEFAULT_PORT = 3000;
@@ -8,7 +8,7 @@ export class Server {
 	manager: RoutingManager;
 	port: number;
 	server?: http.Server;
-	io?: SocketIOServer;
+	wss?: WebSocket.Server;
 
 	constructor(manager: RoutingManager = createBasicRoutingManager(), port: number | string | undefined = process.env.PORT) {
 		const normalizedPort = this.normalizePort(port);
@@ -32,13 +32,11 @@ export class Server {
 			this.server.on('close', resolve);
 			this.server.on('error', (e) => reject(this.onError(e, this.port)));
 
-			this.io = new SocketIOServer(this.server, {
-				transports: ['websocket'],
-				cors: {
-					origin: '*',
-				},
+			this.wss = new WebSocket.Server({
+				server: this.server,
+				perMessageDeflate: false,
 			});
-			this.manager.setIO(this.io);
+			this.manager.setWebSocketServer(this.wss);
 		});
 	}
 

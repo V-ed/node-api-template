@@ -2,15 +2,19 @@ import cors from 'cors';
 import express, { Express } from 'express';
 import path from 'path';
 import readdir from 'recursive-readdir';
-import type { Server } from 'socket.io';
+import type WebSocket from 'ws';
 import AbstractRouter from './AbstractRouter';
 
 export type DefinedRouter = AbstractRouter | { new (): AbstractRouter };
 
 export class RoutingManager {
 	app: Express;
-	routers: AbstractRouter[] = [];
-	#io?: Server;
+	#wss?: WebSocket.Server;
+
+	#routers: AbstractRouter[] = [];
+	get routers(): readonly AbstractRouter[] {
+		return this.#routers;
+	}
 
 	constructor(app: Express) {
 		this.app = app;
@@ -22,6 +26,10 @@ export class RoutingManager {
 	 * @param routersFolderPath The folder path that will get resolved by `path.resolve`. Defaults to `./src/routers`.
 	 */
 	public async autoRegisterRouters(routersFolderPath = './src/routers'): Promise<void> {
+		if (!this.#wss) {
+			throw 'Please do not try to load register a router before adding a WebSocket Server to this router!';
+		}
+
 		const fullDirPath = path.resolve(routersFolderPath);
 
 		const filePaths = await readdir(fullDirPath, ['!*.+(ts|js)']);
@@ -43,22 +51,26 @@ export class RoutingManager {
 	 * @param routers The routers to register and initialize.
 	 */
 	public registerRouters(...routers: DefinedRouter[]): void {
+		if (!this.#wss) {
+			throw 'Please do not register a router before adding a WebSocket Server to this router!';
+		}
+
 		routers.forEach((router) => {
 			const definedRouter = router instanceof AbstractRouter ? router : new router();
 
 			const formattedPath = `${definedRouter.path.startsWith('/') ? '' : '/'}${definedRouter.path}`;
 
-			definedRouter.io = this.#io;
-			this.routers.push(definedRouter);
+			definedRouter.wss = this.#wss!;
+			this.#routers.push(definedRouter);
 
 			this.app.use(formattedPath, definedRouter.router);
 		});
 	}
 
-	public setIO(io: Server): this {
-		this.routers.forEach((router) => (router.io = io));
+	public setWebSocketServer(wss: WebSocket.Server): this {
+		this.routers.forEach((router) => (router.wss = wss));
 
-		this.#io = io;
+		this.#wss = wss;
 
 		return this;
 	}
@@ -67,7 +79,7 @@ export class RoutingManager {
 	 * Stops the `Socket.IO`'s server.
 	 */
 	public async stop(): Promise<void> {
-		return this.#io?.close();
+		return this.#wss?.close();
 	}
 }
 
