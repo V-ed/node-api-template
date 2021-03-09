@@ -18,6 +18,9 @@ jobs:
         
     - name: Lint
       run: npm run lint
+        
+    - name: Lint Tests
+      run: npm run lint:tests
       
   pr-tests-and-coverage:
     name: "PR Tests and Coverage"
@@ -33,10 +36,13 @@ jobs:
       run: npm ci
       
     - name: Build
-      run: npm run build:clean
+      run: npm run build
+      
+    - name: Generate database
+      run: npx prisma db push --preview-feature
       
     - name: Seed
-      run: npm run seed
+      run: npx prisma db seed --preview-feature
       
     - name: Test
       run: npm run test

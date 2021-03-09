@@ -40,10 +40,13 @@ jobs:
       run: npm ci
       
     - name: Build
-      run: npm run build:clean
+      run: npm run build
+      
+    - name: Generate database
+      run: npx prisma db push --preview-feature
       
     - name: Seed
-      run: npm run seed
+      run: npx prisma db seed --preview-feature
       
     - name: Test and Coverage
       run: npm run coverage:test
