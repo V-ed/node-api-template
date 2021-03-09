@@ -16,7 +16,7 @@
 			"runtimeExecutable": "npm",
 			"runtimeArgs": [
 				"run",
-				"dev"
+				"start:debug"
 			],
 			"console": "internalConsole"
 		},
