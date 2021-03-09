@@ -10,7 +10,7 @@ const tsConfig = JSON5.parse(fs.readFileSync('./tsconfig.json', 'utf-8'));
 
 module.exports = {
 	testEnvironment: path.join(__dirname, 'prisma', 'prisma.test-environment.js'),
-	moduleFileExtensions: ['json', 'ts'],
+	moduleFileExtensions: ['js', 'json', 'ts'],
 	// rootDir: 'src',
 	testRegex: '.*\\.spec\\.ts$',
 	transform: {
