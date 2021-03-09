@@ -49,4 +49,4 @@ jobs:
       run: npx prisma db seed --preview-feature
       
     - name: Test and Coverage
-      run: npm run coverage:test
+      run: npm run test:cov
