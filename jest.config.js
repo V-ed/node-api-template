@@ -10,13 +10,13 @@ const tsConfig = JSON5.parse(fs.readFileSync('./tsconfig.json', 'utf-8'));
 
 module.exports = {
 	testEnvironment: path.join(__dirname, 'prisma', 'prisma.test-environment.js'),
-	moduleFileExtensions: ['js', 'json', 'ts'],
+	moduleFileExtensions: ['json', 'ts'],
 	// rootDir: 'src',
 	testRegex: '.*\\.spec\\.ts$',
 	transform: {
-		'^.+\\.(t|j)s$': 'ts-jest',
+		'^.+\\.ts$': 'ts-jest',
 	},
-	collectCoverageFrom: ['**/*.(t|j)s'],
+	collectCoverageFrom: ['**/*.ts'],
 	coverageDirectory: '../coverage',
 	coveragePathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/tests/', '<rootDir>/prisma/'],
 	moduleNameMapper: pathsToModuleNameMapper(tsConfig.compilerOptions.paths, { prefix: '<rootDir>/' }),
