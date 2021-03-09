@@ -4,22 +4,17 @@ import fs from 'fs';
 import gulp from 'gulp';
 import rename from 'gulp-rename';
 import replace from 'gulp-replace';
-import alias from 'gulp-ts-alias';
-import ts from 'gulp-typescript';
 import path from 'path';
 import util from 'util';
 
 const exec = util.promisify(execCallback);
-// const { pipedGulpEsbuild } = require('gulp-esbuild');
 
 // CONFIGS
-
-const tsProject = ts.createProject('./tsconfig.json');
 
 const tmpFolder = './prisma/tmp';
 
 const configs = {
-	buildDest: tsProject.config.compilerOptions.outDir,
+	buildDest: './dist',
 	uploadsFolder: './uploads',
 	devPort: 3005,
 	dbDevPath: `${tmpFolder}/dev.db`,
@@ -46,22 +41,6 @@ function generateGuid() {
 
 // Build Tasks
 
-function buildTypescript() {
-	return (
-		tsProject
-			.src()
-			.pipe(alias({ configuration: { ...{ compilerOptions: {} }, ...tsProject.config } }))
-			// .pipe(replace(/(import .+ from (?:'|")\.{1,2}\/.+)((?:'|"))/g, '$1.js$2'))
-			// .pipe(
-			// 	pipedGulpEsbuild({
-			// 		platform: 'node',
-			// 		// bundle: true,
-			// 	}),
-			// )
-			.pipe(gulp.dest(configs.buildDest))
-	);
-}
-
 function buildPackage() {
 	return (
 		gulp
@@ -73,7 +52,7 @@ function buildPackage() {
 }
 
 function buildEnv() {
-	return gulp.src('./.env', { dot: true }).pipe(replace('src/', '')).pipe(gulp.dest(configs.buildDest));
+	return gulp.src('./.env.prod', { dot: true }).pipe(rename('.env')).pipe(gulp.dest(configs.buildDest));
 }
 
 function buildPrisma() {
@@ -165,7 +144,7 @@ function deleteTmp() {
 
 // COMBINES
 
-const build = gulp.parallel(buildEnv, buildPackage, buildTypescript, buildPrisma);
+const build = gulp.parallel(buildEnv, buildPackage, buildPrisma);
 
 const setupEnvs = gulp.parallel(setupProdEnv, setupDevEnv);
 
@@ -175,10 +154,8 @@ const init = gulp.parallel(deleteDist, gulp.series(gulp.parallel(setupEnvs, hand
 
 // EXPORTS
 
-exports.build = build;
+const cleanbuild = gulp.series(init, build);
 
-exports.init = init;
+const cleandb = gulp.parallel(deleteDatabase);
 
-exports.cleanbuild = gulp.series(init, build);
-
-exports.cleandb = gulp.parallel(deleteDatabase);
+export { build, init, cleanbuild, cleandb };

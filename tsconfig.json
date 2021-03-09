@@ -33,9 +33,10 @@
     "strictPropertyInitialization": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
+    // "importsNotUsedAsValues": "error",
     
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    // "importsNotUsedAsValues": "error"
   },
   "include": [
     "src/**/*.ts"
