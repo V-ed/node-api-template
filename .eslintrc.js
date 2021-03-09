@@ -76,8 +76,14 @@ module.exports = {
 		{
 			files: ["*.ts"],
 			rules: {
-				"@typescript-eslint/explicit-function-return-type": ["error"]
+				"@typescript-eslint/explicit-function-return-type": "error",
 			}
-		}
+		},
+		{
+			files: ["*.js"],
+			rules: {
+				"@typescript-eslint/no-var-requires": "off",
+			}
+		},
 	],
 };
