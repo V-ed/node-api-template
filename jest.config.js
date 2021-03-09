@@ -16,7 +16,7 @@ module.exports = {
 	transform: {
 		'^.+\\.ts$': 'ts-jest',
 	},
-	collectCoverageFrom: ['**/*.ts'],
+	collectCoverageFrom: ['**/*.ts', '!gulpfile.ts'],
 	coverageDirectory: '../coverage',
 	coveragePathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/tests/', '<rootDir>/prisma/'],
 	moduleNameMapper: pathsToModuleNameMapper(tsConfig.compilerOptions.paths, { prefix: '<rootDir>/' }),
