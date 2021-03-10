@@ -98,8 +98,8 @@ jobs:
     - name: Test End to End Functions
       run: npm run test:e2e
       
-  pr-tests-and-coverage:
-    name: "PR Tests and Coverage"
+  pr-coverage:
+    name: "PR Coverage"
     runs-on: ubuntu-latest
 
     steps:
