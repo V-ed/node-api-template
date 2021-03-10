@@ -23,4 +23,9 @@ export class MessageController {
 	async createMessage(@Body() messageData: CreateMessageDto): Promise<IUserMessage> {
 		return this.messageService.createMessage(messageData);
 	}
+
+	@Post()
+	async updateMessage(@Body() messageData: CreateMessageDto): Promise<IUserMessage> {
+		return this.messageService.createMessage(messageData);
+	}
 }
