@@ -115,9 +115,6 @@ jobs:
       run: npm run init
       
     - name: Report Coverage
-      uses: mattallty/jest-github-action@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # ! Commented out because it cause issues with the Github Action
+      uses: anuraag016/Jest-Coverage-Diff@master
       # with:
-      #   changes-only: true
+        # delta: 0.5 # Delta of % changed that would make this job fail
