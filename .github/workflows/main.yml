@@ -5,6 +5,9 @@ on:
     branches:
       - 'master'
       - 'dev'
+      
+env:
+  NODE_VERSION: '14'
 
 jobs:
   lint:
@@ -15,7 +18,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v2
       with:
-        node-version: '14'
+        node-version: ${{env.NODE_VERSION}}
         
     - name: Install
       run: npm ci
@@ -26,15 +29,15 @@ jobs:
     - name: Lint Tests
       run: npm run lint:tests
       
-  build-and-test:
-    name: "Build and Test"
+  build:
+    name: "Build"
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v2
       with:
-        node-version: '14'
+        node-version: ${{env.NODE_VERSION}}
 
     - name: Install
       run: npm ci
@@ -42,11 +45,59 @@ jobs:
     - name: Build
       run: npm run build
       
+  test:
+    name: "Test and Coverage"
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: ${{env.NODE_VERSION}}
+
+    - name: Install
+      run: npm ci
+      
+    - name: Init
+      run: npm run init
+      
+    - name: Test and Coverage
+      run: npm run test:cov
+      
+  test-e2e:
+    name: "Test End to End"
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: ${{env.NODE_VERSION}}
+
+    - name: Install
+      run: npm ci
+      
+    - name: Init
+      run: npm run init
+      
+    - name: Test End to End Functions
+      run: npm run test:e2e
+      
+  seed:
+    name: "Test Seed"
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: ${{env.NODE_VERSION}}
+
+    - name: Install
+      run: npm ci
+      
     - name: Init
       run: npm run init
       
     - name: Seed
       run: npx prisma db seed --preview-feature
-      
-    - name: Test and Coverage
-      run: npm run test:cov

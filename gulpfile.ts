@@ -4,8 +4,8 @@ import fs from 'fs';
 import gulp from 'gulp';
 import rename from 'gulp-rename';
 import replace from 'gulp-replace';
-import path from 'path';
 import util from 'util';
+import { pushDb } from './prisma/functions';
 
 const exec = util.promisify(execCallback);
 
@@ -103,9 +103,7 @@ function setupTmpDatabaseFolder() {
 }
 
 function updateDatabaseSchema() {
-	const prismaBinary = path.join(__dirname, 'node_modules', '.bin', 'prisma');
-
-	return exec(`${prismaBinary} db push --preview-feature`);
+	return pushDb();
 }
 
 // Delete tasks

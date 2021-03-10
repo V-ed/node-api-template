@@ -19,6 +19,9 @@ class PrismaTestEnvironment extends NodeEnvironment {
 
 		process.env.DATABASE_URL = dbUrl;
 		this.global.process.env.DATABASE_URL = dbUrl;
+
+		process.env.SEED = 'test';
+		this.global.process.env.SEED = 'test';
 	}
 
 	async setup() {

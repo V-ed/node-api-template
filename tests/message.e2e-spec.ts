@@ -1,9 +1,14 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
+import { seedDb } from '../prisma/functions';
 import { AppModule } from '../src/app.module';
 
-describe('AppController (e2e)', () => {
+beforeAll(async () => {
+	await seedDb();
+});
+
+describe('MessageController (e2e)', () => {
 	let app: INestApplication;
 
 	beforeEach(async () => {
@@ -19,7 +24,10 @@ describe('AppController (e2e)', () => {
 		await app.close();
 	});
 
-	it('/ (GET)', () => {
-		return request(app.getHttpServer()).get('/').expect(200).expect('Hello World!');
+	it('/ (GET)', async () => {
+		const response = await request(app.getHttpServer()).get('/messages').expect('Content-Type', /json/).expect(200);
+
+		expect(Array.isArray(response.body)).toBe(true);
+		expect(response.body.length).toBe(3);
 	});
 });
