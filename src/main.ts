@@ -5,7 +5,7 @@ import { SocketIoAdapter } from './socket/SocketIoAdapter';
 
 const DEFAULT_PORT = 3000;
 
-const PORT = DEFAULT_PORT ?? process.env.PORT ?? DEFAULT_PORT;
+const PORT = process.env.PORT ?? DEFAULT_PORT;
 
 async function bootstrap(): Promise<void> {
 	const app = await NestFactory.create(AppModule, { cors: { origin: '*' } });
