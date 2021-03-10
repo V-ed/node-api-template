@@ -6,6 +6,8 @@
       "es2019"
     ],
     
+    "allowJs": true,
+    
     "baseUrl": "./",
     "paths": {
         "$/*": ["./src/*"]
