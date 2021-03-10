@@ -8,6 +8,7 @@ const { pathsToModuleNameMapper } = require('ts-jest/utils');
 const tsConfig = JSON5.parse(fs.readFileSync('./tsconfig.json', 'utf-8'));
 
 module.exports = {
+	testTimeout: 10000,
 	testEnvironment: '<rootDir>/../prisma/prisma.test-environment.js',
 	moduleFileExtensions: ['js', 'json', 'ts'],
 	// rootDir: 'src',
