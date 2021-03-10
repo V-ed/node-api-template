@@ -4,6 +4,7 @@ import fs from 'fs';
 import gulp from 'gulp';
 import rename from 'gulp-rename';
 import replace from 'gulp-replace';
+import ts from 'gulp-typescript';
 import util from 'util';
 import { pushDb } from './prisma/functions';
 
@@ -11,10 +12,12 @@ const exec = util.promisify(execCallback);
 
 // CONFIGS
 
+const tsProject = ts.createProject('./tsconfig.json');
+
 const tmpFolder = './prisma/tmp';
 
 const configs = {
-	buildDest: './dist',
+	buildDest: tsProject.config.compilerOptions?.outDir || './dist',
 	uploadsFolder: './uploads',
 	devPort: 3005,
 	dbDevPath: `${tmpFolder}/dev.db`,
@@ -41,11 +44,15 @@ function generateGuid() {
 
 // Build Tasks
 
+function buildNest() {
+	return exec('npx nest build');
+}
+
 function buildPackage() {
 	return (
 		gulp
 			.src('./package.json')
-			// .pipe(replace('dist/main.js', 'main.js'))
+			.pipe(replace(configs.buildDest, '.'))
 			// .pipe(replace('"type": "commonjs"', '"type": "module"'))
 			.pipe(gulp.dest(configs.buildDest))
 	);
@@ -142,7 +149,7 @@ function deleteTmp() {
 
 // COMBINES
 
-const build = gulp.parallel(buildEnv, buildPackage, buildPrisma);
+const build = gulp.series(buildNest, gulp.parallel(buildEnv, buildPackage, buildPrisma));
 
 const setupEnvs = gulp.parallel(setupProdEnv, setupDevEnv);
 
