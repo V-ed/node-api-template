@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { importFixtures } from './seeder';
+import { importFixtures } from './fixtures';
 
 export async function main(prisma: PrismaClient): Promise<PrismaClient> {
 	return importFixtures(prisma);
