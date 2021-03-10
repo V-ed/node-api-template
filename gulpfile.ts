@@ -149,7 +149,7 @@ function deleteTmp() {
 
 // COMBINES
 
-const build = gulp.series(buildNest, gulp.parallel(buildEnv, buildPackage, buildPrisma));
+const build = gulp.series(buildNest, gulp.parallel(gulp.series(setupProdEnv, buildEnv), buildPackage, buildPrisma));
 
 const setupEnvs = gulp.parallel(setupProdEnv, setupDevEnv);
 
