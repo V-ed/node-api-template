@@ -12,7 +12,7 @@ module.exports = {
 	testEnvironment: '<rootDir>/../prisma/prisma.test-environment.js',
 	moduleFileExtensions: ['js', 'json', 'ts'],
 	// rootDir: 'src',
-	testRegex: '\\.e2e\\-spec\\.ts$',
+	testRegex: '\\.e2e-spec\\.ts$',
 	transform: {
 		'^.+\\.ts$': 'ts-jest',
 	},
