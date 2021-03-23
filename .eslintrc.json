@@ -2,13 +2,13 @@
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		// project: "tsconfig.json",
-		"sourceType": "module",
+		"sourceType": "module"
 	},
 	"plugins": ["@typescript-eslint/eslint-plugin"],
 	"extends": [
 		"eslint:recommended",
 		"plugin:@typescript-eslint/eslint-recommended",
-		"plugin:@typescript-eslint/recommended",
+		"plugin:@typescript-eslint/recommended"
 		// "plugin:prettier/recommended",
 	],
 	"root": true,
@@ -58,32 +58,32 @@
 		"@typescript-eslint/no-empty-function": ["error", { "allow": ["private-constructors"] }],
 		"@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
 		"@typescript-eslint/no-magic-numbers": ["warn", { "ignoreArrayIndexes": true, "ignoreReadonlyClassProperties": true, "ignore": [-1, 0, 1] }],
-		"@typescript-eslint/no-non-null-assertion": "off",
+		"@typescript-eslint/no-non-null-assertion": "off"
 	},
 	"overrides": [
 		{
 			"files": "tests/**/*.ts",
 			"rules": {
-				"@typescript-eslint/no-magic-numbers": "off",
+				"@typescript-eslint/no-magic-numbers": "off"
 			}
 		},
 		{
 			"files": "prisma/**/*.ts",
 			"rules": {
-				"@typescript-eslint/no-magic-numbers": "off",
+				"@typescript-eslint/no-magic-numbers": "off"
 			}
 		},
 		{
 			"files": ["*.ts"],
 			"rules": {
-				"@typescript-eslint/explicit-function-return-type": "error",
+				"@typescript-eslint/explicit-function-return-type": "error"
 			}
 		},
 		{
 			"files": ["*.js"],
 			"rules": {
 				"@typescript-eslint/no-var-requires": "off",
-				"@typescript-eslint/no-magic-numbers": "off",
+				"@typescript-eslint/no-magic-numbers": "off"
 			}
 		}
 	]
