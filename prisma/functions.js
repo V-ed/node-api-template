@@ -5,6 +5,10 @@ const exec = util.promisify(require('child_process').exec);
 
 const prismaBinary = path.join(__dirname, '..', 'node_modules', '.bin', 'prisma');
 
+async function generate() {
+	return exec(`${prismaBinary} generate`);
+}
+
 async function pushDb() {
 	return exec(`${prismaBinary} db push`);
 }
@@ -14,6 +18,7 @@ async function seedDb() {
 }
 
 module.exports = {
+	generate,
 	pushDb,
 	seedDb,
 };

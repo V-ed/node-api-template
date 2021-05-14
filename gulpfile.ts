@@ -6,7 +6,7 @@ import rename from 'gulp-rename';
 import replace from 'gulp-replace';
 import ts from 'gulp-typescript';
 import util from 'util';
-import { pushDb } from './prisma/functions';
+import { generate as generatePrisma, pushDb } from './prisma/functions';
 
 const exec = util.promisify(execCallback);
 
@@ -109,6 +109,10 @@ function setupTmpDatabaseFolder() {
 	return Promise.resolve();
 }
 
+function generatePrismaHelpers() {
+	return generatePrisma();
+}
+
 function updateDatabaseSchema() {
 	return pushDb();
 }
@@ -155,7 +159,10 @@ const setupEnvs = gulp.parallel(setupProdEnv, setupDevEnv);
 
 const handleTmp = gulp.series(setupTmpDatabaseFolder, deprecateTmp, deleteTmp);
 
-const init = gulp.parallel(deleteDist, gulp.series(gulp.parallel(setupEnvs, handleTmp), updateDatabaseSchema));
+const init = gulp.parallel(
+	deleteDist,
+	gulp.series(gulp.parallel(setupEnvs, handleTmp), gulp.series(generatePrismaHelpers, updateDatabaseSchema)),
+);
 
 // EXPORTS
 
