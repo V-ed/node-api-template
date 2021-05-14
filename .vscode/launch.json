@@ -6,7 +6,7 @@
 	"configurations": [
 		{
 			"name": "Debug App",
-			"type": "node",
+			"type": "pwa-node",
 			"request": "launch",
 			"restart": true,
 			"skipFiles": [
@@ -18,7 +18,12 @@
 				"run",
 				"start:debug"
 			],
-			"console": "internalConsole"
+			"console": "internalConsole",
+			"resolveSourceMapLocations": [
+				"${workspaceFolder}/**",
+				"!**/node_modules/**"
+			],
+			"outputCapture": "std"
 		},
 		{
 			"type": "node",
