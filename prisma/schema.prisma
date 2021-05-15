@@ -15,17 +15,17 @@ model User {
   username  String    @unique
   firstName String?   @map("first_name")
   lastName  String?   @map("last_name")
-  Message   Message[]
+  messages  Message[]
 
   @@map("users")
 }
 
 model Message {
-  id      Int      @id @default(autoincrement())
-  message String
-  time    DateTime @default(now())
-  user    User     @relation(fields: [userId], references: [id])
-  userId  Int
+  id     Int      @id @default(autoincrement())
+  text   String
+  time   DateTime @default(now())
+  user   User     @relation(fields: [userId], references: [id])
+  userId Int
 
   @@map("messages")
 }

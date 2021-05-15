@@ -5,5 +5,5 @@ export class CreateMessageDto {
 	username!: string;
 
 	@IsNotEmpty()
-	message!: string;
+	text!: string;
 }

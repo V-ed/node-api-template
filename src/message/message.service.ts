@@ -9,16 +9,16 @@ export class MessageService {
 	constructor(private readonly prisma: PrismaService, private readonly socket: SocketService) {}
 
 	async createMessage(messageData: CreateMessageDto): Promise<IUserMessage> {
-		const { username, message } = messageData;
+		const { username, text } = messageData;
 
 		const newMessage = await this.prisma.message.create({
 			data: {
-				message: message,
+				text,
 				user: {
 					connectOrCreate: {
-						where: { username: username },
+						where: { username },
 						create: {
-							username: username,
+							username,
 							firstName: 'Jon',
 							lastName: 'banana',
 						},
@@ -28,7 +28,7 @@ export class MessageService {
 			include: { user: true },
 		});
 
-		const sendableMessage = { user: newMessage.user, message: newMessage.message };
+		const sendableMessage = { user: newMessage.user, message: newMessage.text };
 
 		this.socket.server.emit('send_message', sendableMessage);
 
