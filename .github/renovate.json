@@ -1,9 +1,10 @@
 {
 	"extends": [
-		"config:base",
-		"schedule:weekly"
+		"config:base"
 	],
-	"labels": ["dependencies"],
+	"labels": [
+		"dependencies"
+	],
 	"commitMessagePrefix": "[Renovate] ",
 	"automergeType": "branch",
 	"packageRules": [
@@ -22,5 +23,9 @@
 			],
 			"automerge": true
 		}
+	],
+	"schedule": [
+		"after 1am on Monday",
+		"before 7am on Monday"
 	]
 }
