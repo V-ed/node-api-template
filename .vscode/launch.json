@@ -27,35 +27,47 @@
 		},
 		{
 			"type": "node",
-			"request": "attach",
-			"name": "Debug : Attach to running instance",
-			"skipFiles": [
-				"<node_internals>/**",
-				"${workspaceFolder}/node_modules/**/*.js",
-			],
-			"processId": "${command:PickProcess}",
-			"restart": true,
-			"protocol": "inspector",
-		},
-		{
-			"type": "node",
 			"request": "launch",
-			"name": "Jest All",
+			"name": "Debug Jest",
 			"skipFiles": [
 				"<node_internals>/**",
 				"${workspaceFolder}/node_modules/**/*.js",
 			],
+			"runtimeArgs": ["--inspect-brk"],
 			"program": "${workspaceFolder}/node_modules/.bin/jest",
 			"args": [
 				"--runInBand",
 				"--silent",
 				"--detectOpenHandles"
 			],
-			"console": "internalConsole",
+			"console": "integratedTerminal",
 			"disableOptimisticBPs": true,
 			"windows": {
 				"program": "${workspaceFolder}/node_modules/jest/bin/jest",
 			}
-		}
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Debug Jest E2E",
+			"skipFiles": [
+				"<node_internals>/**",
+				"${workspaceFolder}/node_modules/**/*.js",
+			],
+			"runtimeArgs": ["--inspect-brk"],
+			"program": "${workspaceFolder}/node_modules/.bin/jest",
+			"args": [
+				"--runInBand",
+				"--silent",
+				"--detectOpenHandles",
+				"--config",
+				"./tests/jest.config.ts"
+			],
+			"console": "integratedTerminal",
+			"disableOptimisticBPs": true,
+			"windows": {
+				"program": "${workspaceFolder}/node_modules/jest/bin/jest",
+			}
+		},
 	]
 }
