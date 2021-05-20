@@ -10,6 +10,15 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator nestgraphql {
+  provider = "node node_modules/prisma-nestjs-graphql"
+  output   = "./@generated/prisma-nestjs-graphql"
+  reExport = Directories
+
+  fields_Validator_from  = "class-validator"
+  fields_Validator_input = true
+}
+
 model User {
   id        Int       @id @default(autoincrement())
   username  String    @unique
@@ -21,10 +30,14 @@ model User {
 }
 
 model Message {
-  id     Int      @id @default(autoincrement())
-  text   String
-  time   DateTime @default(now())
-  user   User     @relation(fields: [userId], references: [id])
+  id   Int      @id @default(autoincrement())
+  /// @Validator.IsNotEmpty()
+  text String
+  /// @HideField({ output: false, input: true })
+  time DateTime @default(now())
+  user User     @relation(fields: [userId], references: [id])
+
+  /// @HideField({ output: true, input: true })
   userId Int
 
   @@map("messages")

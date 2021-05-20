@@ -1,7 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { SocketIoAdapter } from './socket/SocketIoAdapter';
+// import { SocketIoAdapter } from './socket/SocketIoAdapter';
 
 const DEFAULT_PORT = 3000;
 
@@ -12,8 +12,8 @@ async function bootstrap(): Promise<void> {
 
 	app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
-	// TODO : Remove Socket.IO v3 custom adapter once Nest supports it
-	app.useWebSocketAdapter(new SocketIoAdapter(app));
+	// // TODO : Remove Socket.IO v3 custom adapter once Nest supports it
+	// app.useWebSocketAdapter(new SocketIoAdapter(app));
 
 	await app.listen(PORT);
 

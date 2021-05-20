@@ -119,3 +119,6 @@ temp/
 ### Custom Patch ###
 # Ignore all DBs
 tmp
+
+# Ignore Prisma Generated files
+prisma/@generated
