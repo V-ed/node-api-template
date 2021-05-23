@@ -21,7 +21,9 @@ export async function importFixtures(prisma?: PrismaClient, fixturesPath = './fi
 
 	const loader = new Loader();
 
-	loader.load(path.resolve(fixturesPath));
+	const resolvedPath = path.resolve(fixturesPath);
+
+	loader.load(resolvedPath);
 
 	const resolver = new Resolver();
 	const fixtures = resolver.resolve(loader.fixtureConfigs);
