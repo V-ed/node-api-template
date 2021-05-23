@@ -17,7 +17,7 @@ const tsProject = ts.createProject('./tsconfig.json');
 const tmpFolder = './prisma/tmp';
 
 const configs = {
-	buildDest: tsProject.config.compilerOptions?.outDir || './dist',
+	buildDest: (tsProject.config.compilerOptions?.outDir as string) || './dist',
 	uploadsFolder: './uploads',
 	devPort: 3005,
 	dbDevPath: `${tmpFolder}/dev.db`,
@@ -120,7 +120,7 @@ function updateDatabaseSchema() {
 // Delete tasks
 
 function deleteDist() {
-	return del([configs.buildDest]);
+	return del(configs.buildDest);
 }
 
 // function deleteUploads() {
@@ -128,27 +128,35 @@ function deleteDist() {
 // }
 
 function deleteDatabase() {
-	return del([configs.dbDevPath]);
+	return del(configs.dbDevPath);
 }
 
 // Deprecation Tasks
 
-function deprecateTmp() {
+function deprecateFiles(files: string | string[], dest: string) {
 	const time = Date.now();
 
 	return gulp
-		.src(configs.tmpFiles)
+		.src(files)
 		.pipe(
-			rename(function (path) {
+			rename((path) => {
 				path.dirname += '/backup';
 				path.basename += `_${time}`;
 			}),
 		)
-		.pipe(gulp.dest(tmpFolder));
+		.pipe(gulp.dest(dest));
+}
+
+function deprecateTmp() {
+	return deprecateFiles(configs.tmpFiles, tmpFolder);
 }
 
 function deleteTmp() {
 	return del(configs.tmpFiles);
+}
+
+function deprecateDb() {
+	return deprecateFiles(configs.dbDevPath, tmpFolder);
 }
 
 // COMBINES
@@ -159,15 +167,16 @@ const setupEnvs = gulp.parallel(setupProdEnv, setupDevEnv);
 
 const handleTmp = gulp.series(setupTmpDatabaseFolder, deprecateTmp, deleteTmp);
 
-const init = gulp.parallel(
-	deleteDist,
-	gulp.series(gulp.parallel(setupEnvs, handleTmp), gulp.series(generatePrismaHelpers, updateDatabaseSchema)),
-);
+const setupPrisma = gulp.series(generatePrismaHelpers, updateDatabaseSchema);
+
+const init = gulp.parallel(deleteDist, gulp.series(gulp.parallel(setupEnvs, handleTmp), setupPrisma));
 
 // EXPORTS
 
-const cleanbuild = gulp.series(init, build);
+export const cleanbuild = gulp.series(init, build);
 
-const cleandb = gulp.parallel(deleteDatabase);
+export const cleandb = gulp.parallel(deleteDatabase);
 
-export { build, init, cleanbuild, cleandb };
+export const clearDb = gulp.series(setupEnvs, deprecateDb, updateDatabaseSchema);
+
+export { build, init };
