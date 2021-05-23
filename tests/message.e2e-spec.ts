@@ -1,11 +1,11 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { seedDb } from '../prisma/functions';
+import { seedTests } from '../prisma/seed';
 import { AppModule } from '../src/app.module';
 
 beforeAll(async () => {
-	await seedDb();
+	await seedTests();
 });
 
 describe('MessageController (e2e)', () => {
