@@ -3,6 +3,7 @@
 		"esbenp.prettier-vscode",
 		"dbaeumer.vscode-eslint",
 		"prisma.prisma",
-		"orta.vscode-jest"
+		"orta.vscode-jest",
+		"graphql.vscode-graphql"
 	], 
 }

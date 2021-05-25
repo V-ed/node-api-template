@@ -45,7 +45,8 @@
     "src/**/*.ts",
     "tests/**/*.ts",
     ".jest/**/*.ts",
-    "prisma/**/*.ts"
+    "prisma/**/*.ts",
+    ".graphqlrc.ts"
   ],
   "exclude": [
     "node_modules"
