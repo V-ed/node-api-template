@@ -1,14 +1,13 @@
-// @ts-check
-const path = require('path');
-const fs = require('fs');
-const NodeEnvironment = require('jest-environment-node');
+import fs from 'fs';
+import NodeEnvironment from 'jest-environment-node';
+import path from 'path';
+import { pushDb } from './functions';
 
-const { pushDb } = require('./functions');
+export class PrismaTestEnvironment extends NodeEnvironment {
+	dbName?: string;
+	dbPath?: string;
 
-class PrismaTestEnvironment extends NodeEnvironment {
-	constructor(config) {
-		super(config);
-
+	async setup() {
 		const randomNum = Math.round(Math.random() * 1000);
 
 		// Generate a unique sqlite identifier for this test context
@@ -22,9 +21,7 @@ class PrismaTestEnvironment extends NodeEnvironment {
 
 		process.env.SEED = 'test';
 		this.global.process.env.SEED = 'test';
-	}
 
-	async setup() {
 		// Run the migrations to ensure our schema has the required structure
 		await pushDb();
 
@@ -33,11 +30,11 @@ class PrismaTestEnvironment extends NodeEnvironment {
 
 	async teardown() {
 		try {
-			await fs.promises.unlink(this.dbPath);
+			await fs.promises.unlink(this.dbPath!);
 		} catch (error) {
 			// doesn't matter as the environment is torn down
 		}
 	}
 }
 
-module.exports = PrismaTestEnvironment;
+export default PrismaTestEnvironment;

@@ -12,7 +12,7 @@ function defineBaseJestConfig<T extends Config.InitialOptions>(config: T) {
 
 const baseConfig = defineBaseJestConfig({
 	rootDir: '../',
-	testEnvironment: '<rootDir>/prisma/prisma.test-environment.js',
+	testEnvironment: '<rootDir>/prisma/prisma.test-environment.ts',
 	moduleFileExtensions: ['js', 'json', 'ts'],
 	transform: {
 		'^.+\\.ts$': 'ts-jest',

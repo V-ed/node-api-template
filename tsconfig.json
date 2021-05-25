@@ -43,7 +43,8 @@
   "include": [
     "src/**/*.ts",
     "tests/**/*.ts",
-    ".jest/**/*.ts"
+    ".jest/**/*.ts",
+    "prisma/**/*.ts"
   ],
   "exclude": [
     "node_modules"
