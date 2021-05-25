@@ -41,7 +41,9 @@
     "allowSyntheticDefaultImports": true,
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "tests/**/*.ts",
+    ".jest/**/*.ts"
   ],
   "exclude": [
     "node_modules"

@@ -11,7 +11,7 @@
 			"restart": true,
 			"skipFiles": [
 				"<node_internals>/**",
-				"${workspaceFolder}/node_modules/**/*.js",
+				"${workspaceFolder}/node_modules/**/*.js"
 			],
 			"runtimeExecutable": "npm",
 			"runtimeArgs": [
@@ -23,51 +23,121 @@
 				"${workspaceFolder}/**",
 				"!**/node_modules/**"
 			],
-			"outputCapture": "std"
-		},
-		{
-			"type": "node",
-			"request": "launch",
-			"name": "Debug Jest",
-			"skipFiles": [
-				"<node_internals>/**",
-				"${workspaceFolder}/node_modules/**/*.js",
-			],
-			"runtimeArgs": ["--inspect-brk"],
-			"program": "${workspaceFolder}/node_modules/.bin/jest",
-			"args": [
-				"--runInBand",
-				"--silent",
-				"--detectOpenHandles"
-			],
-			"console": "integratedTerminal",
-			"disableOptimisticBPs": true,
-			"windows": {
-				"program": "${workspaceFolder}/node_modules/jest/bin/jest",
+			"outputCapture": "std",
+			"presentation": {
+				"hidden": false,
+				"group": "App",
+				"order": 1,
 			}
 		},
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "Debug Jest E2E",
+			"name": "Debug Jest: All",
 			"skipFiles": [
 				"<node_internals>/**",
-				"${workspaceFolder}/node_modules/**/*.js",
+				"${workspaceFolder}/node_modules/**/*.js"
 			],
-			"runtimeArgs": ["--inspect-brk"],
+			"runtimeArgs": [
+				"--inspect-brk"
+			],
 			"program": "${workspaceFolder}/node_modules/.bin/jest",
 			"args": [
 				"--runInBand",
 				"--silent",
 				"--detectOpenHandles",
 				"--config",
-				"./tests/jest.config.ts"
+				".jest/jest.all-config.ts"
 			],
 			"console": "integratedTerminal",
 			"disableOptimisticBPs": true,
 			"windows": {
-				"program": "${workspaceFolder}/node_modules/jest/bin/jest",
+				"program": "${workspaceFolder}/node_modules/jest/bin/jest"
+			},
+			"presentation": {
+				"hidden": false,
+				"group": "Jest",
+				"order": 1
 			}
 		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Debug Jest: Specs",
+			"skipFiles": [
+				"<node_internals>/**",
+				"${workspaceFolder}/node_modules/**/*.js"
+			],
+			"runtimeArgs": [
+				"--inspect-brk"
+			],
+			"program": "${workspaceFolder}/node_modules/.bin/jest",
+			"args": [
+				"--runInBand",
+				"--silent",
+				"--detectOpenHandles",
+				"--config",
+				".jest/jest.specs-config.ts"
+			],
+			"console": "integratedTerminal",
+			"disableOptimisticBPs": true,
+			"windows": {
+				"program": "${workspaceFolder}/node_modules/jest/bin/jest"
+			},
+			"presentation": {
+				"hidden": false,
+				"group": "Jest",
+				"order": 2
+			}
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Debug Jest: E2E",
+			"skipFiles": [
+				"<node_internals>/**",
+				"${workspaceFolder}/node_modules/**/*.js"
+			],
+			"runtimeArgs": [
+				"--inspect-brk"
+			],
+			"program": "${workspaceFolder}/node_modules/.bin/jest",
+			"args": [
+				"--runInBand",
+				"--silent",
+				"--detectOpenHandles",
+				"--config",
+				".jest/jest.e2e-config.ts"
+			],
+			"console": "integratedTerminal",
+			"disableOptimisticBPs": true,
+			"windows": {
+				"program": "${workspaceFolder}/node_modules/jest/bin/jest"
+			},
+			"presentation": {
+				"hidden": false,
+				"group": "Jest",
+				"order": 3
+			}
+		},
+		{
+			"type": "node",
+			"name": "vscode-jest-tests",
+			"request": "launch",
+			"console": "integratedTerminal",
+			"internalConsoleOptions": "neverOpen",
+			"disableOptimisticBPs": true,
+			"cwd": "${workspaceFolder}",
+			"runtimeExecutable": "npm",
+			"args": [
+				"test",
+				"--",
+				"--runInBand",
+				"--watchAll=false"
+			],
+			"presentation": {
+				"hidden": true,
+			}
+		}
 	]
 }

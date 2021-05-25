@@ -63,25 +63,6 @@ jobs:
     - name: Test and Coverage
       run: npm run test:cov
       
-  test-e2e:
-    name: "Test End to End"
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: ${{env.NODE_VERSION}}
-
-    - name: Install
-      run: npm ci
-      
-    - name: Init
-      run: npm run init
-      
-    - name: Test End to End Functions
-      run: npm run test:e2e
-      
   seed:
     name: "Test Seed"
     runs-on: ubuntu-latest

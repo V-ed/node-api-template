@@ -18,10 +18,11 @@
     "lint:tests": "eslint \"tests/**/*.ts\"",
     "format:prettier": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
     "format:eslint": "eslint \"{src,apps,libs,tests}/**/*.ts\" --fix",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:e2e": "jest --config ./tests/jest.config.ts"
+    "test": "jest --config .jest/jest.all-config.ts",
+    "test:specs": "jest --config .jest/jest.specs-config.ts",
+    "test:e2e": "jest --config .jest/jest.e2e-config.ts",
+    "test:watch": "npm run test -- --watch",
+    "test:cov": "npm run test -- --coverage"
   },
   "dependencies": {
     "@nestjs/common": "7.6.17",
@@ -31,6 +32,7 @@
     "@nestjs/websockets": "7.6.17",
     "@prisma/client": "2.23.0",
     "class-validator": "0.13.1",
+    "deepmerge": "^4.2.2",
     "reflect-metadata": "0.1.13",
     "rimraf": "3.0.2",
     "rxjs": "6.6.7",
