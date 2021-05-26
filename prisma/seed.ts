@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { importFixtures } from './fixtures';
+import { importFixtures } from './functions';
 
 export function seedPath(prisma?: PrismaClient, path?: string) {
-	return importFixtures(prisma, path);
+	return importFixtures({ prisma, fixturesPath: path });
 }
 
 export function seed(prisma?: PrismaClient): Promise<PrismaClient> {
