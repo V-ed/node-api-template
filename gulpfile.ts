@@ -184,4 +184,4 @@ export const cleandb = gulp.parallel(deleteDatabase);
 
 export const clearDb = gulp.series(setupEnvs, deprecateDb, updateDatabaseSchema);
 
-export { build, init };
+export { build, init, setupPrisma };

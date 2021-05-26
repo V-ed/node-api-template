@@ -13,6 +13,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node ./dist/main",
+    "generate": "gulp setupPrisma",
     "lint": "eslint \"{src,apps,libs,tests}/**/*.ts\"",
     "lint:src": "eslint \"{src,apps,libs}/**/*.ts\"",
     "lint:tests": "eslint \"tests/**/*.ts\"",
