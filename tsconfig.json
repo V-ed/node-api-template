@@ -41,12 +41,9 @@
     "allowSyntheticDefaultImports": true,
   },
   "include": [
-    "src/**/*.ts",
-    "tests/**/*.ts",
-    ".jest/**/*.ts",
-    "prisma/**/*.ts"
+    "src/**/*[!.spec].ts",
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
   ]
 }
