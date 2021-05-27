@@ -2,14 +2,13 @@ name: PR Checks
 
 on:
   pull_request:
-    branches-ignore:
-      - 'renovate/**'
       
 env:
   NODE_VERSION: '14'
 
 jobs:
   lint:
+    if: github.actor != 'renovate[bot]'
     name: "Lint"
     runs-on: ubuntu-latest
     
@@ -29,6 +28,7 @@ jobs:
       run: npm run lint:tests
       
   build:
+    if: github.actor != 'renovate[bot]'
     name: "Build"
     runs-on: ubuntu-latest
 
@@ -45,6 +45,7 @@ jobs:
       run: npm run build
       
   seed:
+    if: github.actor != 'renovate[bot]'
     name: "Test Seed"
     runs-on: ubuntu-latest
 
@@ -64,6 +65,7 @@ jobs:
       run: npx prisma db seed --preview-feature
       
   test:
+    if: github.actor != 'renovate[bot]'
     name: "Test"
     runs-on: ubuntu-latest
 
@@ -83,6 +85,7 @@ jobs:
       run: npm run test
       
   pr-coverage:
+    if: github.actor != 'renovate[bot]'
     name: "PR Coverage"
     runs-on: ubuntu-latest
 
