@@ -29,7 +29,7 @@ type ImportFixtureOptions = {
 export async function importFixtures(options?: Partial<ImportFixtureOptions>): Promise<PrismaClient> {
 	const specs: ImportFixtureOptions = {
 		prisma: options?.prisma ?? new PrismaClient(),
-		fixturesPath: options?.fixturesPath ?? './fixtures',
+		fixturesPath: options?.fixturesPath ?? './prisma/fixtures',
 		doCloseDatabase: options?.doCloseDatabase ?? true,
 	};
 
