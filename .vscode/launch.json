@@ -5,7 +5,7 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Debug App",
+			"name": "Run App - Debugging",
 			"type": "pwa-node",
 			"request": "launch",
 			"restart": true,
@@ -16,7 +16,7 @@
 			"runtimeExecutable": "npm",
 			"runtimeArgs": [
 				"run",
-				"start:debug"
+				"start:debug",
 			],
 			"console": "internalConsole",
 			"resolveSourceMapLocations": [
@@ -33,7 +33,7 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "Debug Jest: All",
+			"name": "Jest Debug: All",
 			"skipFiles": [
 				"<node_internals>/**",
 				"${workspaceFolder}/node_modules/**/*.js"
@@ -63,7 +63,7 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "Debug Jest: Specs",
+			"name": "Jest Debug: Specs",
 			"skipFiles": [
 				"<node_internals>/**",
 				"${workspaceFolder}/node_modules/**/*.js"
@@ -93,7 +93,7 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "Debug Jest: E2E",
+			"name": "Jest Debug: E2E",
 			"skipFiles": [
 				"<node_internals>/**",
 				"${workspaceFolder}/node_modules/**/*.js"
@@ -133,7 +133,6 @@
 				"test",
 				"--",
 				"--runInBand",
-				"--watchAll=false"
 			],
 			"presentation": {
 				"hidden": true,
