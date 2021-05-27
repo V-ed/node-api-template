@@ -137,6 +137,10 @@ function deleteDatabase() {
 	return del(configs.dbDevPath);
 }
 
+function deleteTmp() {
+	return del(configs.tmpFiles);
+}
+
 // Deprecation Tasks
 
 function deprecateFiles(files: string | string[], dest: string) {
@@ -157,32 +161,30 @@ function deprecateTmp() {
 	return deprecateFiles(configs.tmpFiles, configs.tmpFullFolderPath);
 }
 
-function deleteTmp() {
-	return del(configs.tmpFiles);
-}
-
 function deprecateDb() {
 	return deprecateFiles(configs.dbDevPath, configs.tmpFullFolderPath);
 }
 
+// ------------------------
+// |     Gulp Commands    |
+// ------------------------
+
 // COMBINES
 
-const build = gulp.series(buildNest, gulp.parallel(gulp.series(setupProdEnv, buildEnv), buildPackage, buildPrisma));
+export const build = gulp.series(buildNest, gulp.parallel(gulp.series(setupProdEnv, buildEnv), buildPackage, buildPrisma));
 
-const setupEnvs = gulp.parallel(setupProdEnv, setupDevEnv);
+export const setupEnvs = gulp.parallel(setupProdEnv, setupDevEnv);
 
-const handleTmp = gulp.series(setupTmpDatabaseFolder, deprecateTmp, deleteTmp);
+export const handleTmp = gulp.series(setupTmpDatabaseFolder, deprecateTmp, deleteTmp);
 
-const setupPrisma = gulp.series(generatePrismaHelpers, updateDatabaseSchema);
+export const setupPrisma = gulp.series(generatePrismaHelpers, updateDatabaseSchema);
 
-const init = gulp.parallel(deleteDist, gulp.series(gulp.parallel(setupEnvs, handleTmp), setupPrisma));
+export const init = gulp.parallel(deleteDist, gulp.series(gulp.parallel(setupEnvs, handleTmp), setupPrisma));
 
-// EXPORTS
+export const cleanBuild = gulp.series(init, build);
 
-export const cleanbuild = gulp.series(init, build);
+export const cleanDb = gulp.series(setupEnvs, deprecateDb, updateDatabaseSchema);
 
-export const cleandb = gulp.parallel(deleteDatabase);
+// Useful commands
 
-export const clearDb = gulp.series(setupEnvs, deprecateDb, updateDatabaseSchema);
-
-export { build, init };
+export { deleteDist, deleteDatabase };

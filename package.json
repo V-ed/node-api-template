@@ -7,12 +7,13 @@
   "license": "MIT",
   "scripts": {
     "init": "gulp init",
-    "prebuild": "rimraf dist",
     "build": "gulp build",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node ./dist/main",
+    "clean:db": "gulp cleanDb",
+    "delete:dist": "gulp deleteDist",
     "lint": "eslint \"{src,apps,libs,tests}/**/*.ts\"",
     "lint:src": "eslint \"{src,apps,libs}/**/*.ts\"",
     "lint:tests": "eslint \"tests/**/*.ts\"",
@@ -34,7 +35,6 @@
     "class-validator": "0.13.1",
     "deepmerge": "^4.2.2",
     "reflect-metadata": "0.1.13",
-    "rimraf": "3.0.2",
     "rxjs": "6.6.7",
     "socket.io": "4.1.2"
   },
