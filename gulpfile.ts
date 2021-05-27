@@ -14,14 +14,20 @@ const exec = util.promisify(execCallback);
 
 const tsProject = ts.createProject('./tsconfig.json');
 
-const tmpFolder = './prisma/tmp';
-
-const configs = {
+export const configs = {
 	buildDest: (tsProject.config.compilerOptions?.outDir as string) || './dist',
 	uploadsFolder: './uploads',
 	devPort: 3005,
-	dbDevPath: `${tmpFolder}/dev.db`,
-	tmpFiles: [`${tmpFolder}/**/*`, `!${tmpFolder}/**/backup`, `!${tmpFolder}/**/backup/**/*`],
+	tmpFolder: '.tmp',
+	get tmpFullFolderPath() {
+		return `./prisma/${this.tmpFolder}`;
+	},
+	get dbDevPath() {
+		return `${this.tmpFullFolderPath}/dev.db`;
+	},
+	get tmpFiles() {
+		return [`${this.tmpFullFolderPath}/**/*`, `!${this.tmpFullFolderPath}/**/backup`, `!${this.tmpFullFolderPath}/**/backup/**/*`];
+	},
 };
 
 // UTILS
@@ -102,8 +108,8 @@ function setupProdEnv() {
 }
 
 function setupTmpDatabaseFolder() {
-	if (!fs.existsSync(tmpFolder)) {
-		fs.mkdirSync(tmpFolder);
+	if (!fs.existsSync(configs.tmpFolder)) {
+		fs.mkdirSync(configs.tmpFolder);
 	}
 
 	return Promise.resolve();
@@ -137,7 +143,7 @@ function deprecateFiles(files: string | string[], dest: string) {
 	const time = Date.now();
 
 	return gulp
-		.src(files)
+		.src(files, { allowEmpty: true })
 		.pipe(
 			rename((path) => {
 				path.dirname += '/backup';
@@ -148,7 +154,7 @@ function deprecateFiles(files: string | string[], dest: string) {
 }
 
 function deprecateTmp() {
-	return deprecateFiles(configs.tmpFiles, tmpFolder);
+	return deprecateFiles(configs.tmpFiles, configs.tmpFullFolderPath);
 }
 
 function deleteTmp() {
@@ -156,7 +162,7 @@ function deleteTmp() {
 }
 
 function deprecateDb() {
-	return deprecateFiles(configs.dbDevPath, tmpFolder);
+	return deprecateFiles(configs.dbDevPath, configs.tmpFullFolderPath);
 }
 
 // COMBINES
