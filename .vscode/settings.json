@@ -20,9 +20,21 @@
 			"source.fixAll.eslint": true
 		}
 	},
+	"[yaml]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.formatOnSave": true,
+	},
 	"[prisma]": {
 		"editor.formatOnSave": true,
 	},
 	"typescript.tsdk": "node_modules/typescript/lib",
-	"jest.jestCommandLine": "npm test --"
+	"jest.jestCommandLine": "npm test --",
+	"json.schemas": [
+		{
+			"fileMatch": [
+				"nest-cli.json"
+			],
+			"url": "https://json.schemastore.org/nest-cli"
+		}
+	]
 }
