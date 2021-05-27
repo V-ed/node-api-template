@@ -42,13 +42,10 @@
     "allowSyntheticDefaultImports": true,
   },
   "include": [
-    "src/**/*.ts",
-    "tests/**/*.ts",
-    ".jest/**/*.ts",
-    "prisma/**/*.ts",
-    ".graphqlrc.ts"
+    "src/**/*[!.spec].ts",
+    ".graphqlrc.ts",
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
   ]
 }

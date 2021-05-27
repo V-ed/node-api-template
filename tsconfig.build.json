@@ -5,8 +5,6 @@
     "tests",
     "dist",
     "**/*spec.ts",
-    ".jest",
-    "prisma",
-    ".graphqlrc.ts"
+    ".graphqlrc.ts",
   ]
 }

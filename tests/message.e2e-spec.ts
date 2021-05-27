@@ -1,10 +1,10 @@
+import { AppModule } from '$/app.module';
 import { INestApplication } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 import gql from 'graphql-tag';
 import { seedTests } from '../prisma/seed';
-import { AppModule } from '../src/app.module';
 
 beforeAll(async () => {
 	await seedTests();
