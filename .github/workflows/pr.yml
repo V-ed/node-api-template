@@ -2,106 +2,106 @@ name: PR Checks
 
 on:
   pull_request:
-      
+
 env:
   NODE_VERSION: '14'
 
 jobs:
   lint:
     if: github.actor != 'renovate[bot]'
-    name: "Lint"
+    name: 'Lint'
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: ${{env.NODE_VERSION}}
-        
-    - name: Install
-      run: npm ci
-        
-    - name: Lint
-      run: npm run lint:src
-        
-    - name: Lint Tests
-      run: npm run lint:tests
-      
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{env.NODE_VERSION}}
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint:src
+
+      - name: Lint Tests
+        run: npm run lint:tests
+
   build:
     if: github.actor != 'renovate[bot]'
-    name: "Build"
+    name: 'Build'
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: ${{env.NODE_VERSION}}
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{env.NODE_VERSION}}
 
-    - name: Install
-      run: npm ci
-      
-    - name: Build
-      run: npm run build
-      
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
   seed:
     if: github.actor != 'renovate[bot]'
-    name: "Test Seed"
+    name: 'Test Seed'
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: ${{env.NODE_VERSION}}
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{env.NODE_VERSION}}
 
-    - name: Install
-      run: npm ci
-      
-    - name: Init
-      run: npm run init
-      
-    - name: Seed
-      run: npx prisma db seed --preview-feature
-      
+      - name: Install
+        run: npm ci
+
+      - name: Init
+        run: npm run init
+
+      - name: Seed
+        run: npx prisma db seed --preview-feature
+
   test:
     if: github.actor != 'renovate[bot]'
-    name: "Test"
+    name: 'Test'
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: ${{env.NODE_VERSION}}
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{env.NODE_VERSION}}
 
-    - name: Install
-      run: npm ci
-      
-    - name: Init
-      run: npm run init
-      
-    - name: Test
-      run: npm run test
-      
+      - name: Install
+        run: npm ci
+
+      - name: Init
+        run: npm run init
+
+      - name: Test
+        run: npm run test
+
   pr-coverage:
     if: github.actor != 'renovate[bot]'
-    name: "PR Coverage"
+    name: 'PR Coverage'
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: ${{env.NODE_VERSION}}
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{env.NODE_VERSION}}
 
-    - name: Install
-      run: npm ci
-      
-    - name: Init
-      run: npm run init
-      
-    - name: Report Coverage
-      uses: anuraag016/Jest-Coverage-Diff@master
-      # with:
+      - name: Install
+        run: npm ci
+
+      - name: Init
+        run: npm run init
+
+      - name: Report Coverage
+        uses: anuraag016/Jest-Coverage-Diff@master
+        # with:
         # delta: 0.5 # Delta of % changed that would make this job fail

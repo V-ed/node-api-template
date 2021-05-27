@@ -20,6 +20,10 @@
 			"source.fixAll.eslint": true
 		}
 	},
+	"[yaml]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.formatOnSave": true,
+	},
 	"[prisma]": {
 		"editor.formatOnSave": true,
 	},
