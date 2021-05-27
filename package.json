@@ -18,9 +18,9 @@
     "lint:tests": "eslint \"tests/**/*.ts\"",
     "format:prettier": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
     "format:eslint": "eslint \"{src,apps,libs,tests}/**/*.ts\" --fix",
-    "test": "jest --config .jest/jest.all-config.ts",
-    "test:specs": "jest --config .jest/jest.specs-config.ts",
-    "test:e2e": "jest --config .jest/jest.e2e-config.ts",
+    "test": "jest --config tests/.jest/jest.all-config.ts",
+    "test:specs": "jest --config tests/.jest/jest.specs-config.ts",
+    "test:e2e": "jest --config tests/.jest/jest.e2e-config.ts",
     "test:watch": "npm run test -- --watch",
     "test:cov": "npm run test -- --coverage"
   },
