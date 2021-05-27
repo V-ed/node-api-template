@@ -10,7 +10,7 @@ type ImportFixtureOptions = {
 	/** The prisma client on which to import the fixtures in. Uses the default prisma client if undefined. */
 	prisma: PrismaClient;
 	/**
-	 * The path to the fixtures folder. Defaults to `./fixtures`. `.` refer to project's root.
+	 * The path to the fixtures folder. Defaults to `./prisma/fixtures`. `.` refer to project's root.
 	 *
 	 * Example paths :
 	 * - `${__dirname}/fixtures` - current directory's fixture folder
