@@ -7,12 +7,13 @@
   "license": "MIT",
   "scripts": {
     "init": "gulp init",
-    "prebuild": "rimraf dist",
     "build": "gulp build",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node ./dist/main",
+    "clean:db": "gulp cleanDb",
+    "delete:dist": "gulp deleteDist",
     "generate": "gulp setupPrisma",
     "lint": "eslint \"{src,apps,libs,tests}/**/*.ts\"",
     "lint:src": "eslint \"{src,apps,libs}/**/*.ts\"",
@@ -39,7 +40,6 @@
     "graphql": "^15.5.0",
     "graphql-tools": "^7.0.5",
     "reflect-metadata": "0.1.13",
-    "rimraf": "3.0.2",
     "rxjs": "6.6.7",
     "socket.io": "4.1.2"
   },
