@@ -171,7 +171,7 @@ function deprecateDb() {
 
 // COMBINES
 
-export const build = gulp.series(buildNest, gulp.parallel(gulp.series(setupProdEnv, buildEnv), buildPackage, buildPrisma));
+export const build = gulp.series(deleteDist, buildNest, gulp.parallel(gulp.series(setupProdEnv, buildEnv), buildPackage, buildPrisma));
 
 export const setupEnvs = gulp.parallel(setupProdEnv, setupDevEnv);
 
