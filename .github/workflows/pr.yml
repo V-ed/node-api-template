@@ -19,7 +19,7 @@ jobs:
           node-version: ${{env.NODE_VERSION}}
 
       - name: Install
-        run: npm ci
+        run: npm ci --no-optional
 
       - name: Lint Prisma
         run: npm run lint:prisma
@@ -42,7 +42,7 @@ jobs:
           node-version: ${{env.NODE_VERSION}}
 
       - name: Install
-        run: npm ci
+        run: npm ci --no-optional
 
       - name: Build
         run: npm run build
@@ -59,7 +59,7 @@ jobs:
           node-version: ${{env.NODE_VERSION}}
 
       - name: Install
-        run: npm ci
+        run: npm ci --no-optional
 
       - name: Init
         run: npm run init
@@ -79,7 +79,7 @@ jobs:
           node-version: ${{env.NODE_VERSION}}
 
       - name: Install
-        run: npm ci
+        run: npm ci --no-optional
 
       - name: Init
         run: npm run init
@@ -99,7 +99,7 @@ jobs:
           node-version: ${{env.NODE_VERSION}}
 
       - name: Install
-        run: npm ci
+        run: npm ci --no-optional
 
       - name: Init
         run: npm run init
