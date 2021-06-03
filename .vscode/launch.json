@@ -31,6 +31,32 @@
 			}
 		},
 		{
+			"name": "Run App - Debugging No Watch",
+			"type": "pwa-node",
+			"request": "launch",
+			"restart": true,
+			"skipFiles": [
+				"<node_internals>/**",
+				"${workspaceFolder}/node_modules/**/*.js"
+			],
+			"runtimeExecutable": "npm",
+			"runtimeArgs": [
+				"run",
+				"start:debug:no-watch",
+			],
+			"console": "internalConsole",
+			"resolveSourceMapLocations": [
+				"${workspaceFolder}/**",
+				"!**/node_modules/**"
+			],
+			"outputCapture": "std",
+			"presentation": {
+				"hidden": false,
+				"group": "App",
+				"order": 2,
+			}
+		},
+		{
 			"type": "node",
 			"request": "launch",
 			"name": "Jest Debug: All",

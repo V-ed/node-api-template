@@ -70,8 +70,16 @@ export async function generate() {
 	return exec(`${prismaBinary} generate`);
 }
 
-export async function pushDb() {
-	return exec(`${prismaBinary} db push`);
+export type PushDbOptions = {
+	skipGenerators: boolean;
+};
+
+export async function pushDb(options?: Partial<PushDbOptions>) {
+	const opts: PushDbOptions = { ...{ skipGenerators: false }, ...(options ?? {}) };
+
+	const optionsString = opts.skipGenerators ? ' --skip-generate' : '';
+
+	return exec(`${prismaBinary} db push${optionsString}`);
 }
 
 export async function seedDb() {

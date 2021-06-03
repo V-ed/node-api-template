@@ -27,7 +27,7 @@ export class PrismaTestEnvironment extends NodeEnvironment {
 		this.global.process.env.SEED = seedName;
 
 		// Run the migrations to ensure our schema has the required structure
-		await pushDb();
+		await pushDb({ skipGenerators: true });
 
 		return super.setup();
 	}

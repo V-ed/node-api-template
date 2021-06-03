@@ -1,7 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { PORT } from './utils';
+import { EnvironmentConfig } from './env.validation';
 // import { SocketIoAdapter } from './socket/SocketIoAdapter';
 
 async function bootstrap(): Promise<void> {
@@ -12,9 +12,13 @@ async function bootstrap(): Promise<void> {
 	// // TODO : Remove Socket.IO v3 custom adapter once Nest supports it
 	// app.useWebSocketAdapter(new SocketIoAdapter(app));
 
-	await app.listen(PORT);
+	const env = app.get(EnvironmentConfig);
 
-	console.log(`Server launched on port ${PORT}!`);
+	const port = env.PORT;
+
+	await app.listen(port);
+
+	console.log(`Server launched on port ${port}!`);
 }
 
 bootstrap();

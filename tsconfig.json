@@ -42,10 +42,12 @@
     "allowSyntheticDefaultImports": true,
   },
   "include": [
-    "src/**/*[!.spec].ts",
+    "src/**/*.ts",
     ".graphqlrc.ts",
   ],
   "exclude": [
     "node_modules",
+    "src/**/*.spec.ts",
+    "src/**/*.d.ts",
   ]
 }
