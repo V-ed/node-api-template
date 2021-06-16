@@ -34,7 +34,13 @@ export class PubSub extends PubSubGraphQL {
 		const select = new PrismaSelect(info).value;
 		const fullTriggers = Array.isArray(triggers) ? triggers : [triggers];
 
-		fullTriggers.forEach((trigger) => (this.eventSubsSelectors[trigger] = (this.eventSubsSelectors[trigger] ?? []).concat(select)));
+		fullTriggers.forEach((trigger) => {
+			if (!this.eventSubsSelectors[trigger]) {
+				this.eventSubsSelectors[trigger] = [];
+			}
+
+			this.eventSubsSelectors[trigger]!.concat(select);
+		});
 
 		return withCancel(sub, () => {
 			fullTriggers.forEach((trigger) => {
