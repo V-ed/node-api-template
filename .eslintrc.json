@@ -63,16 +63,10 @@
 	},
 	"overrides": [
 		{
-			"files": "**/*.{e2e-spec,spec}.ts",
+			"files": ["**/*.{e2e-spec,spec}.ts", "{tests,prisma}/**/*.ts"],
 			"rules": {
 				"@typescript-eslint/no-magic-numbers": "off",
 				"@typescript-eslint/no-explicit-any": "off"
-			}
-		},
-		{
-			"files": "prisma/**/*.ts",
-			"rules": {
-				"@typescript-eslint/no-magic-numbers": "off"
 			}
 		},
 		{
