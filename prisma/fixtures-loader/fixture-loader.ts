@@ -3,7 +3,7 @@ import { DepGraph } from 'dependency-graph';
 import { Fixture, IdentityModel, LinkMethod } from './fixture';
 import ClassContainer from './loader';
 
-type ImportFixtureOptions = {
+export type ImportFixtureOptions = {
 	/** The prisma client on which to import the fixtures in. Uses the default prisma client if undefined. */
 	prisma: PrismaClient;
 	/**
@@ -20,7 +20,7 @@ type ImportFixtureOptions = {
 function getSpecs(options?: Partial<ImportFixtureOptions>): ImportFixtureOptions {
 	return {
 		prisma: options?.prisma ?? new PrismaClient(),
-		fixturesPath: options?.fixturesPath ?? './prisma/fixtures-ts',
+		fixturesPath: options?.fixturesPath ?? './prisma/fixtures',
 		doCloseDatabase: options?.doCloseDatabase ?? true,
 	};
 }
@@ -112,8 +112,8 @@ export async function loadFixtures(options?: Partial<ImportFixtureOptions>) {
 			await specs.prisma.$disconnect();
 		}
 
+		console.error(error);
+
 		throw error;
 	}
 }
-
-loadFixtures();

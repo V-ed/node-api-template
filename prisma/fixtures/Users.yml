@@ -1,6 +1,0 @@
-entity: user
-items:
-  user1:
-    username: 'V-ed'
-    firstName: 'Guillaume'
-    lastName: 'Marcoux'
