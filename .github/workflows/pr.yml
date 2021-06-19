@@ -107,5 +107,5 @@ jobs:
       - name: Report Coverage
         uses: anuraag016/Jest-Coverage-Diff@master
         with:
-          runCommand: "npx jest --coverage --coverageReporters='json-summary' --config 'tests/.jest/jest.all-config.ts'"
+          runCommand: "npx jest --coverage --collectCoverage=true --coverageReporters='json-summary' --coverageDirectory='./' --config 'tests/.jest/jest.all-config.ts'"
           # delta: 0.5 # Delta of % changed that would make this job fail
