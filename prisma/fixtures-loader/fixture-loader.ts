@@ -3,10 +3,26 @@ import { DepGraph } from 'dependency-graph';
 import { Fixture, IdentityModel, LinkMethod } from './fixture';
 import ClassContainer from './loader';
 
-export async function loadFixtures() {
+type DependenciesData = Record<string, IdentityModel[]>;
+
+function createLinkFn(fixture: Fixture, depsData: DependenciesData): LinkMethod<Fixture> {
+	return (dependency: typeof fixture['dependencies'][number], _options) => {
+		const data: IdentityModel[] | undefined = depsData[dependency.name];
+
+		if (!data?.length) {
+			throw 'Data missing!';
+		}
+
+		const test = data[0];
+
+		return test;
+	};
+}
+
+export async function loadFixtures(folderPath = './prisma/fixtures-ts') {
 	const prisma = new PrismaClient();
 
-	const fixtureContainer = new ClassContainer(Fixture, './prisma/fixtures-ts');
+	const fixtureContainer = new ClassContainer(Fixture, folderPath);
 
 	const fixtureInstances = await fixtureContainer.getDetailedInstances();
 
@@ -24,54 +40,48 @@ export async function loadFixtures() {
 
 	const order = depGraph.overallOrder();
 
-	const dependenciesData: Record<string, IdentityModel[]> = {};
+	const dependenciesData: DependenciesData = {};
 
-	function createLinkFn(fixture: Fixture, depsData: typeof dependenciesData): LinkMethod<Fixture> {
-		return (dependency: typeof fixture['dependencies'][number], _options) => {
-			const data: IdentityModel[] | undefined = depsData[dependency.name];
-
-			if (!data?.length) {
-				throw 'Data missing!';
-			}
-
-			const test = data[0];
-
-			return test;
-		};
-	}
-
-	order
-		.map((fixtureName) => {
-			return {
-				name: fixtureName,
-				fixture: depGraph.getNodeData(fixtureName),
-			};
-		})
-		.map(({ name, fixture }) => {
-			return async () => {
-				const linkToThisFixtureFn = createLinkFn(fixture, dependenciesData);
-
-				const models = await fixture.seed(prisma, linkToThisFixtureFn);
-
-				dependenciesData[name] = models;
-
+	try {
+		const result = await order
+			.map((fixtureName) => {
 				return {
-					name,
-					models,
+					name: fixtureName,
+					fixture: depGraph.getNodeData(fixtureName),
 				};
-			};
-		})
-		.reduce(
-			(p, task) => p.then(task),
-			Promise.resolve() as unknown as Promise<{
-				name: string;
-				models: IdentityModel[];
-			}>,
-		);
+			})
+			.map(({ name, fixture }) => {
+				return async () => {
+					const linkToThisFixtureFn = createLinkFn(fixture, dependenciesData);
 
-	await prisma.$disconnect();
+					const models = await fixture.seed(prisma, linkToThisFixtureFn);
 
-	console.log('cool');
+					dependenciesData[name] = models;
+
+					return {
+						name,
+						models,
+					};
+				};
+			})
+			.reduce(
+				(p, task) => p.then(async (prevResults = []) => [...prevResults, await task()]),
+				Promise.resolve() as unknown as Promise<
+					{
+						name: string;
+						models: IdentityModel[];
+					}[]
+				>,
+			);
+
+		await prisma.$disconnect();
+
+		return result;
+	} catch (error) {
+		await prisma.$disconnect();
+
+		throw error;
+	}
 }
 
 loadFixtures();
