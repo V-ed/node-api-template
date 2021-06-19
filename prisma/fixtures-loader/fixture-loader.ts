@@ -3,6 +3,28 @@ import { DepGraph } from 'dependency-graph';
 import { Fixture, IdentityModel, LinkMethod } from './fixture';
 import ClassContainer from './loader';
 
+type ImportFixtureOptions = {
+	/** The prisma client on which to import the fixtures in. Uses the default prisma client if undefined. */
+	prisma: PrismaClient;
+	/**
+	 * The path to the fixtures folder. Defaults to `./prisma/fixtures`. `.` refer to project's root.
+	 *
+	 * Example paths :
+	 * - `${__dirname}/fixtures` - current directory's fixture folder
+	 */
+	fixturesPath: string;
+	/** Close Prisma's database or not after importing all fixtures. Defaults to `true`. */
+	doCloseDatabase: boolean;
+};
+
+function getSpecs(options?: Partial<ImportFixtureOptions>): ImportFixtureOptions {
+	return {
+		prisma: options?.prisma ?? new PrismaClient(),
+		fixturesPath: options?.fixturesPath ?? './prisma/fixtures-ts',
+		doCloseDatabase: options?.doCloseDatabase ?? true,
+	};
+}
+
 type DependenciesData = Record<string, IdentityModel[]>;
 
 function createLinkFn(fixture: Fixture, depsData: DependenciesData): LinkMethod<Fixture> {
@@ -19,10 +41,16 @@ function createLinkFn(fixture: Fixture, depsData: DependenciesData): LinkMethod<
 	};
 }
 
-export async function loadFixtures(folderPath = './prisma/fixtures-ts') {
-	const prisma = new PrismaClient();
+/**
+ *
+ * @param options Options defining so behavior of the importation, such as the fixtures path and if the database should be closed.
+ * @returns Promise containing the results of the seeds, tagged by their (class) name and their created models.
+ * If an error occurred while seeding, the resulting promise will short-circuit to throw said error, respecting the given options.
+ */
+export async function loadFixtures(options?: Partial<ImportFixtureOptions>) {
+	const specs = getSpecs(options);
 
-	const fixtureContainer = new ClassContainer(Fixture, folderPath);
+	const fixtureContainer = new ClassContainer(Fixture, specs.fixturesPath);
 
 	const fixtureInstances = await fixtureContainer.getDetailedInstances();
 
@@ -54,7 +82,7 @@ export async function loadFixtures(folderPath = './prisma/fixtures-ts') {
 				return async () => {
 					const linkToThisFixtureFn = createLinkFn(fixture, dependenciesData);
 
-					const models = await fixture.seed(prisma, linkToThisFixtureFn);
+					const models = await fixture.seed(specs.prisma, linkToThisFixtureFn);
 
 					dependenciesData[name] = models;
 
@@ -74,11 +102,15 @@ export async function loadFixtures(folderPath = './prisma/fixtures-ts') {
 				>,
 			);
 
-		await prisma.$disconnect();
+		if (specs.doCloseDatabase) {
+			await specs.prisma.$disconnect();
+		}
 
 		return result;
 	} catch (error) {
-		await prisma.$disconnect();
+		if (specs.doCloseDatabase) {
+			await specs.prisma.$disconnect();
+		}
 
 		throw error;
 	}
