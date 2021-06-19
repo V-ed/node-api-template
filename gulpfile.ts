@@ -6,7 +6,7 @@ import rename from 'gulp-rename';
 import replace from 'gulp-replace';
 import ts from 'gulp-typescript';
 import util from 'util';
-import { generate as generatePrisma, pushDb } from './prisma/functions';
+import { generate as generatePrisma, pushDb, seedDb } from './prisma/functions';
 
 const exec = util.promisify(execCallback);
 
@@ -120,7 +120,11 @@ function generatePrismaHelpers() {
 }
 
 function updateDatabaseSchema() {
-	return pushDb();
+	return pushDb({ skipGenerators: true });
+}
+
+function seedDatabase() {
+	return seedDb();
 }
 
 // Delete tasks
@@ -183,7 +187,9 @@ export const init = gulp.parallel(deleteDist, gulp.series(gulp.parallel(setupEnv
 
 export const cleanBuild = gulp.series(init, build);
 
-export const cleanDb = gulp.series(setupEnvs, deprecateDb, updateDatabaseSchema);
+export const cleanDb = gulp.series(setupEnvs, deprecateDb, deleteDatabase, updateDatabaseSchema);
+
+export const cleanSeed = gulp.series(cleanDb, seedDatabase);
 
 // Useful commands
 
