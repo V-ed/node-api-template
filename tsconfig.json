@@ -35,6 +35,7 @@
     "strictPropertyInitialization": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
+    "noImplicitOverride": true,
     // "importsNotUsedAsValues": "error",
     
     "esModuleInterop": true,
