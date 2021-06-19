@@ -1,6 +1,5 @@
 import { PrismaClient, User } from '@prisma/client';
-import { Fixture } from '../fixtures-loader/fixture';
-import { createMany } from '../fixtures-loader/utils';
+import { createMany, Fixture } from '../fixtures-loader';
 
 export default class UserFixture extends Fixture<User> {
 	override dependencies = [];

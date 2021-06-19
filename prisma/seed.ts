@@ -1,4 +1,4 @@
-import { ImportFixtureOptions, loadFixtures } from './fixtures-loader/fixture-loader';
+import { ImportFixtureOptions, loadFixtures } from './fixtures-loader';
 
 export function seed(...args: Parameters<typeof loadFixtures>) {
 	return loadFixtures(...args);

@@ -1,5 +1,5 @@
 import { Message, PrismaClient } from '@prisma/client';
-import { Fixture, LinkMethod } from '../fixtures-loader/fixture';
+import { Fixture, LinkMethod } from '../fixtures-loader';
 import UserFixture from './Users';
 
 export default class MessageFixture extends Fixture<Message> {
