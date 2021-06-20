@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { DepGraph } from 'dependency-graph';
-import { Fixture, IdentityModel, LinkMethod } from './fixture';
+import { Fixture, IdentityModel, LinkMethod, LinkMode } from './fixture';
 import ClassContainer from './loader';
 
 export type ImportFixtureOptions = {
@@ -28,16 +28,44 @@ function getSpecs(options?: Partial<ImportFixtureOptions>): ImportFixtureOptions
 type DependenciesData = Record<string, IdentityModel[]>;
 
 function createLinkFn(fixture: Fixture, depsData: DependenciesData): LinkMethod<Fixture> {
-	return (dependency: typeof fixture['dependencies'][number], _options) => {
+	return (dependency: typeof fixture['dependencies'][number], option) => {
 		const data: IdentityModel[] | undefined = depsData[dependency.name];
 
 		if (!data?.length) {
 			throw 'Data missing!';
 		}
 
-		const test = data[0];
+		if (typeof option == 'number') {
+			if (option < 0) {
+				throw `The index must be bigger than 0! Given : '${option}'`;
+			}
+			if (data.length < option) {
+				throw `Trying to link to a model that is out of the bounds of the given fixture! Max allowed : '${data.length}', given : '${option}'`;
+			}
 
-		return test;
+			return data[option];
+		} else if (typeof option == 'string') {
+			switch (option) {
+				case LinkMode.RANDOM:
+					return data[Math.floor(Math.random() * data.length)];
+				default:
+					throw 'Library error!';
+			}
+		} else {
+			const { from, to } = option;
+
+			if (from < 0) {
+				throw `The 'from' option must be bigger than 0! Given : '${from}'`;
+			}
+			if (data.length < to) {
+				throw `The 'to' option cannot be bigger than the selected fixture's size! Max allowed : '${data.length}', given : '${to}'`;
+			}
+			if (from > to) {
+				throw `The 'from' option must be less or equal to the 'to' option! From : '${from}', To : '${to}'`;
+			}
+
+			return data[from + Math.floor(Math.random() * (to - from))];
+		}
 	};
 }
 

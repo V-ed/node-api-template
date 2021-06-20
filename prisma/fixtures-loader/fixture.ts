@@ -11,7 +11,7 @@ type ModelType<T extends ModelDependency<IdentityModel>> = T extends ModelDepend
 
 export type LinkMethod<F extends Fixture> = (
 	dependency: F['dependencies'][number],
-	_option: number | Range | LinkMode,
+	option: number | Range | LinkMode,
 ) => ModelType<typeof dependency>;
 
 // Linking option types
