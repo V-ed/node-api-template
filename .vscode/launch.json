@@ -73,7 +73,7 @@
 				"--silent",
 				"--detectOpenHandles",
 				"--config",
-				".jest/jest.all-config.ts"
+				"tests/.jest/jest.all-config.ts"
 			],
 			"console": "integratedTerminal",
 			"disableOptimisticBPs": true,
@@ -103,7 +103,7 @@
 				"--silent",
 				"--detectOpenHandles",
 				"--config",
-				".jest/jest.specs-config.ts"
+				"tests/.jest/jest.specs-config.ts"
 			],
 			"console": "integratedTerminal",
 			"disableOptimisticBPs": true,
@@ -133,7 +133,7 @@
 				"--silent",
 				"--detectOpenHandles",
 				"--config",
-				".jest/jest.e2e-config.ts"
+				"tests/.jest/jest.e2e-config.ts"
 			],
 			"console": "integratedTerminal",
 			"disableOptimisticBPs": true,
