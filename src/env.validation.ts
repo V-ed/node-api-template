@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsEnum, IsNumber, IsString } from 'class-validator';
 
 export enum Environment {
@@ -12,6 +13,7 @@ export class EnvironmentConfig {
 	@IsEnum(Environment)
 	readonly NODE_ENV: Environment = Environment.Development;
 
+	@Type(() => Number)
 	@IsNumber()
 	readonly PORT: number = DEFAULT_PORT;
 
