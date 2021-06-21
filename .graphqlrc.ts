@@ -1,8 +1,8 @@
 import type { IGraphQLConfig } from 'graphql-config';
-import { PORT } from './src/utils';
+import { env } from './src/config.module';
 
 const config: IGraphQLConfig = {
-	schema: `http://localhost:${PORT}/graphql`,
+	schema: `http://localhost:${env.PORT}/graphql`,
 };
 
 export default config;
