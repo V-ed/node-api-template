@@ -20,7 +20,11 @@ type DataCreatorSpecifierMapped<F extends PrismaCreator> = (current: number) => 
 type DataUpsertorSpecifier<F extends PrismaUpsertor> = Parameters<F>[0];
 type DataUpsertorSpecifierMapped<F extends PrismaUpsertor> = (current: number) => DataUpsertorSpecifier<F>;
 
-type AutoRange = { fromArray: any[]; count: number };
+type AutoRange = {
+	fromArray: any[];
+	count: number;
+	includeArray?: boolean;
+};
 
 type PossibleRange = number | Range | AutoRange;
 
@@ -28,7 +32,7 @@ function isVarRange(o: any): o is Range {
 	return o.from != undefined;
 }
 
-function getCountAndDelta(range: PossibleRange): { count: number; delta: number } {
+function getRangeData<T = any>(range: PossibleRange): { count: number; delta: number; models?: T[] } {
 	if (typeof range == 'number') {
 		return { count: range, delta: 1 };
 	}
@@ -43,7 +47,11 @@ function getCountAndDelta(range: PossibleRange): { count: number; delta: number 
 
 		return { count: range.to - range.from, delta: range.from };
 	} else {
-		return { count: range.count, delta: range.fromArray.length + 1 };
+		return {
+			count: range.count,
+			delta: range.fromArray.length + 1,
+			models: range.includeArray ? range.fromArray : undefined,
+		};
 	}
 }
 
@@ -75,13 +83,13 @@ export async function createRange<F extends PrismaCreator>(
 	range: PossibleRange,
 	dataCreator: DataCreatorSpecifierMapped<F>,
 ): Promise<InferredGeneric<ReturnType<F>>[]> {
-	const { count, delta } = getCountAndDelta(range);
+	const { count, delta, models: previousModels } = getRangeData(range);
 
 	const models = Array.from(Array(count).keys())
 		.map((index) => dataCreator(index + delta))
 		.map((dataSpecifier) => () => fn({ data: dataSpecifier }));
 
-	return serialPromises(models);
+	return [...(previousModels ?? []), ...(await serialPromises(models))];
 }
 
 export async function upsertMany<F extends PrismaUpsertor>(
@@ -102,11 +110,11 @@ export async function upsertRange<F extends PrismaUpsertor>(
 	range: PossibleRange,
 	dataUpsertor: DataUpsertorSpecifierMapped<F>,
 ): Promise<InferredGeneric<ReturnType<F>>[]> {
-	const { count, delta } = getCountAndDelta(range);
+	const { count, delta, models: previousModels } = getRangeData(range);
 
 	const models = Array.from(Array(count).keys())
 		.map((index) => dataUpsertor(index + delta))
 		.map((dataSpecifier) => () => fn({ ...dataSpecifier }));
 
-	return serialPromises(models);
+	return [...(previousModels ?? []), ...(await serialPromises(models))];
 }
