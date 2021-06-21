@@ -22,7 +22,7 @@ describe('MessageController (e2e)', () => {
 		app = moduleFixture.createNestApplication();
 		await app.init();
 
-		const module: GraphQLModule = moduleFixture.get<GraphQLModule>(GraphQLModule);
+		const module = moduleFixture.get(GraphQLModule);
 
 		apolloClient = createTestClient(module.apolloServer);
 	});
