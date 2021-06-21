@@ -14,6 +14,15 @@ type DataSpecifier<F extends PrismaCreator> = Parameters<F>[0]['data'];
 
 type DataSpecifierMapped<F extends PrismaCreator> = (current: number) => DataSpecifier<F>;
 
+async function serialPromises<T>(promises: (() => PromiseLike<T>)[]) {
+	const results = await promises.reduce(
+		(p, task) => p.then(async (prevResults = []) => [...prevResults, await task()]),
+		Promise.resolve() as unknown as Promise<T[]>,
+	);
+
+	return Promise.all(results);
+}
+
 export async function createMany<F extends PrismaCreator>(
 	fn: F,
 	...dataSpecifiers: (DataSpecifier<F> | DataSpecifierMapped<F>)[]
@@ -22,10 +31,10 @@ export async function createMany<F extends PrismaCreator>(
 		const data =
 			typeof dataSpecifier == 'function' ? (dataSpecifier as (current: number) => Parameters<F>[0]['data'])(index) : dataSpecifier;
 
-		return fn({ data });
+		return () => fn({ data });
 	});
 
-	return Promise.all(models);
+	return serialPromises(models);
 }
 
 export async function createRange<F extends PrismaCreator>(
@@ -52,7 +61,7 @@ export async function createRange<F extends PrismaCreator>(
 
 	const models = Array.from(Array(count).keys())
 		.map((index) => dataCreator(index + delta))
-		.map((dataSpecifier) => fn({ data: dataSpecifier }));
+		.map((dataSpecifier) => () => fn({ data: dataSpecifier }));
 
-	return Promise.all(models);
+	return serialPromises(models);
 }
