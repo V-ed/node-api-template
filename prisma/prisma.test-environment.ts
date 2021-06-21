@@ -8,7 +8,7 @@ import { pushDb } from './functions';
 export class PrismaTestEnvironment extends NodeEnvironment {
 	dbName?: string;
 
-	async setup() {
+	override async setup() {
 		const id = crypto.randomBytes(16).toString('hex');
 
 		// Generate a unique sqlite identifier for this test context
@@ -32,7 +32,7 @@ export class PrismaTestEnvironment extends NodeEnvironment {
 		return super.setup();
 	}
 
-	async teardown() {
+	override async teardown() {
 		const dbPath = path.join(configs.tmpFullFolderPath, this.dbName!);
 
 		try {

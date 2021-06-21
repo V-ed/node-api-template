@@ -26,7 +26,8 @@
 		"array-bracket-newline": ["error", { "multiline": true }],
 		"indent": "off",
 		// "indent": ["error", "tab", { "VariableDeclarator": { "var": 2, "let": 2, "const": 3 }, "SwitchCase": 1}],
-		"no-tabs": ["error", { "allowIndentationTabs": true }],
+		// "no-tabs": ["error", { "allowIndentationTabs": true }],
+		"no-tabs": "off",
 		"implicit-arrow-linebreak": ["error", "beside"],
 		"no-whitespace-before-property": "error",
 		"no-multi-spaces": "error",
@@ -62,17 +63,10 @@
 	},
 	"overrides": [
 		{
-			"files": "**/*.{e2e-spec,spec}.ts",
+			"files": ["**/*.{e2e-spec,spec}.ts", "{tests,prisma}/**/*.ts"],
 			"rules": {
 				"@typescript-eslint/no-magic-numbers": "off",
 				"@typescript-eslint/no-explicit-any": "off"
-
-			}
-		},
-		{
-			"files": "prisma/**/*.ts",
-			"rules": {
-				"@typescript-eslint/no-magic-numbers": "off"
 			}
 		},
 		{
