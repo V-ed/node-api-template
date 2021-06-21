@@ -1,6 +1,0 @@
-entity: message
-connectedFields: ['user']
-items:
-  message{1..3}:
-    text: '{{random.words(4)}}'
-    user: '@user*'

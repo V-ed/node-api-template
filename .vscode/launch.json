@@ -163,6 +163,20 @@
 			"presentation": {
 				"hidden": true,
 			}
+		},
+		{
+			"name": "Current TS File",
+			"type": "node",
+			"request": "launch",
+			"args": ["${relativeFile}"],
+			"runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+			"sourceMaps": true,
+			"cwd": "${workspaceRoot}",
+			"protocol": "inspector",
+			"skipFiles": [
+				"<node_internals>/**",
+				"${workspaceFolder}/node_modules/**/*.js"
+			],
 		}
 	]
 }
