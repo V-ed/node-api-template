@@ -14,8 +14,6 @@ export default class UserFixture extends Fixture<User> {
 			lastName: f.name.lastName(),
 		}));
 
-		f.unique(f.address.city);
-
 		return users;
 	}
 }
