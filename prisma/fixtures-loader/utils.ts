@@ -1,3 +1,5 @@
+import { Range } from './fixture';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PrismaCreateDataArgType = { data: any };
 
@@ -22,6 +24,35 @@ export async function createMany<F extends PrismaCreator>(
 
 		return fn({ data });
 	});
+
+	return Promise.all(models);
+}
+
+export async function createRange<F extends PrismaCreator>(
+	fn: F,
+	range: number | Range,
+	dataCreator: DataSpecifierMapped<F>,
+): Promise<InferredGeneric<ReturnType<F>>[]> {
+	function getCountAndDelta(): { count: number; delta: number } {
+		if (typeof range == 'number') {
+			return { count: range, delta: 1 };
+		}
+
+		if (range.from <= 0) {
+			throw `The 'from' range option must be bigger than 0! Given : '${range.from}'`;
+		}
+		if (range.from > range.to) {
+			throw `The 'from' range option must be less or equal to the 'to' range option! From : '${range.from}', To : '${range.to}'`;
+		}
+
+		return { count: range.to - range.from, delta: range.from };
+	}
+
+	const { count, delta } = getCountAndDelta();
+
+	const models = Array.from(Array(count).keys())
+		.map((index) => dataCreator(index + delta))
+		.map((dataSpecifier) => fn({ data: dataSpecifier }));
 
 	return Promise.all(models);
 }
