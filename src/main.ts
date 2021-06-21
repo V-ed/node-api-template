@@ -5,7 +5,9 @@ import { EnvironmentConfig } from './env.validation';
 import { SocketIoAdapter } from './socket/SocketIoAdapter';
 
 async function bootstrap(): Promise<void> {
-	const app = await NestFactory.create(AppModule, { cors: { origin: '*' } });
+	const app = await NestFactory.create(AppModule);
+
+	app.enableCors({ origin: '*' });
 
 	app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
