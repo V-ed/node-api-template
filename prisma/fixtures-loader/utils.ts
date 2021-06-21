@@ -1,18 +1,51 @@
 import { Range } from './fixture';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PrismaCreateDataArgType = { data: any };
+type PrismaUpsertDataArgType = {
+	create: any;
+	update: any;
+	where: any;
+};
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type PrismaCreateReturnType = PromiseLike<any>;
+type PrismaFnReturnType = PromiseLike<any>;
 
-type PrismaCreator = (args: PrismaCreateDataArgType) => PrismaCreateReturnType;
+type PrismaCreator = (args: PrismaCreateDataArgType) => PrismaFnReturnType;
+type PrismaUpsertor = (args: PrismaUpsertDataArgType) => PrismaFnReturnType;
 
 type InferredGeneric<R> = R extends PromiseLike<infer T> ? T : never;
 
-type DataSpecifier<F extends PrismaCreator> = Parameters<F>[0]['data'];
+type DataCreatorSpecifier<F extends PrismaCreator> = Parameters<F>[0]['data'];
+type DataCreatorSpecifierMapped<F extends PrismaCreator> = (current: number) => DataCreatorSpecifier<F>;
 
-type DataSpecifierMapped<F extends PrismaCreator> = (current: number) => DataSpecifier<F>;
+type DataUpsertorSpecifier<F extends PrismaUpsertor> = Parameters<F>[0];
+type DataUpsertorSpecifierMapped<F extends PrismaUpsertor> = (current: number) => DataUpsertorSpecifier<F>;
+
+type AutoRange = { fromArray: any[]; count: number };
+
+type PossibleRange = number | Range | AutoRange;
+
+function isVarRange(o: any): o is Range {
+	return o.from != undefined;
+}
+
+function getCountAndDelta(range: PossibleRange): { count: number; delta: number } {
+	if (typeof range == 'number') {
+		return { count: range, delta: 1 };
+	}
+
+	if (isVarRange(range)) {
+		if (range.from <= 0) {
+			throw `The 'from' range option must be bigger than 0! Given : '${range.from}'`;
+		}
+		if (range.from > range.to) {
+			throw `The 'from' range option must be less or equal to the 'to' range option! From : '${range.from}', To : '${range.to}'`;
+		}
+
+		return { count: range.to - range.from, delta: range.from };
+	} else {
+		return { count: range.count, delta: range.fromArray.length + 1 };
+	}
+}
 
 async function serialPromises<T>(promises: (() => PromiseLike<T>)[]) {
 	const results = await promises.reduce(
@@ -25,7 +58,7 @@ async function serialPromises<T>(promises: (() => PromiseLike<T>)[]) {
 
 export async function createMany<F extends PrismaCreator>(
 	fn: F,
-	...dataSpecifiers: (DataSpecifier<F> | DataSpecifierMapped<F>)[]
+	...dataSpecifiers: (DataCreatorSpecifier<F> | DataCreatorSpecifierMapped<F>)[]
 ): Promise<InferredGeneric<ReturnType<F>>[]> {
 	const models = dataSpecifiers.map((dataSpecifier, index) => {
 		const data =
@@ -39,29 +72,41 @@ export async function createMany<F extends PrismaCreator>(
 
 export async function createRange<F extends PrismaCreator>(
 	fn: F,
-	range: number | Range,
-	dataCreator: DataSpecifierMapped<F>,
+	range: PossibleRange,
+	dataCreator: DataCreatorSpecifierMapped<F>,
 ): Promise<InferredGeneric<ReturnType<F>>[]> {
-	function getCountAndDelta(): { count: number; delta: number } {
-		if (typeof range == 'number') {
-			return { count: range, delta: 1 };
-		}
-
-		if (range.from <= 0) {
-			throw `The 'from' range option must be bigger than 0! Given : '${range.from}'`;
-		}
-		if (range.from > range.to) {
-			throw `The 'from' range option must be less or equal to the 'to' range option! From : '${range.from}', To : '${range.to}'`;
-		}
-
-		return { count: range.to - range.from, delta: range.from };
-	}
-
-	const { count, delta } = getCountAndDelta();
+	const { count, delta } = getCountAndDelta(range);
 
 	const models = Array.from(Array(count).keys())
 		.map((index) => dataCreator(index + delta))
 		.map((dataSpecifier) => () => fn({ data: dataSpecifier }));
+
+	return serialPromises(models);
+}
+
+export async function upsertMany<F extends PrismaUpsertor>(
+	fn: F,
+	...dataSpecifiers: (DataUpsertorSpecifier<F> | DataUpsertorSpecifierMapped<F>)[]
+): Promise<InferredGeneric<ReturnType<F>>[]> {
+	const models = dataSpecifiers.map((dataSpecifier, index) => {
+		const upsertor = typeof dataSpecifier == 'function' ? (dataSpecifier as (current: number) => Parameters<F>[0])(index) : dataSpecifier;
+
+		return () => fn({ ...upsertor });
+	});
+
+	return serialPromises(models);
+}
+
+export async function upsertRange<F extends PrismaUpsertor>(
+	fn: F,
+	range: PossibleRange,
+	dataUpsertor: DataUpsertorSpecifierMapped<F>,
+): Promise<InferredGeneric<ReturnType<F>>[]> {
+	const { count, delta } = getCountAndDelta(range);
+
+	const models = Array.from(Array(count).keys())
+		.map((index) => dataUpsertor(index + delta))
+		.map((dataSpecifier) => () => fn({ ...dataSpecifier }));
 
 	return serialPromises(models);
 }
