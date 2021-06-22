@@ -1,7 +1,9 @@
 import { AppModule } from '$/app.module';
 import { INestApplication } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
 import { Test, TestingModule } from '@nestjs/testing';
-import request from 'supertest';
+import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
+import gql from 'graphql-tag';
 import { seedTests } from '../prisma/seed';
 
 beforeAll(async () => {
@@ -10,6 +12,7 @@ beforeAll(async () => {
 
 describe('MessageController (e2e)', () => {
 	let app: INestApplication;
+	let apolloClient: ApolloServerTestClient;
 
 	beforeEach(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -18,6 +21,10 @@ describe('MessageController (e2e)', () => {
 
 		app = moduleFixture.createNestApplication();
 		await app.init();
+
+		const module = moduleFixture.get(GraphQLModule);
+
+		apolloClient = createTestClient(module.apolloServer);
 	});
 
 	afterAll(async () => {
@@ -25,9 +32,28 @@ describe('MessageController (e2e)', () => {
 	});
 
 	it('/ (GET)', async () => {
-		const response = await request(app.getHttpServer()).get('/messages').expect('Content-Type', /json/).expect(200);
+		const result = await apolloClient.query({
+			query: gql`
+				query {
+					messages {
+						text
+						time
+					}
+				}
+			`,
+			// variables: {},
+		});
 
-		expect(Array.isArray(response.body)).toBe(true);
-		expect(response.body.length).toBe(3);
+		expect(result.data).toBeDefined();
+
+		expect(Array.isArray(result.data.messages)).toBe(true);
+		expect(result.data.messages.length).toBe(3);
+
+		result.data.messages.forEach((message: any) => {
+			expect(message).toEqual({
+				text: expect.any(String),
+				time: expect.any(String),
+			});
+		});
 	});
 });

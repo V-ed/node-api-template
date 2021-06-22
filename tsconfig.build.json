@@ -8,5 +8,6 @@
     "tests",
     "dist",
     "**/*spec.ts",
+    ".graphqlrc.ts",
   ]
 }

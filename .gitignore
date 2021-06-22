@@ -120,3 +120,6 @@ temp/
 # Ignore all DBs
 tmp
 .tmp
+
+# Ignore Prisma Generated files
+prisma/@generated

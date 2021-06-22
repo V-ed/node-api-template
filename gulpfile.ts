@@ -28,6 +28,9 @@ export const configs = {
 	get tmpFiles() {
 		return [`${this.tmpFullFolderPath}/**/*`, `!${this.tmpFullFolderPath}/**/backup`, `!${this.tmpFullFolderPath}/**/backup/**/*`];
 	},
+	get prismaGeneratedFolder() {
+		return `${this.tmpFullFolderPath}/@generated`;
+	},
 };
 
 // UTILS
@@ -134,7 +137,7 @@ function deleteDist() {
 }
 
 // function deleteUploads() {
-// 	return del([configs.uploadsFolder]);
+// 	return del(configs.uploadsFolder);
 // }
 
 function deleteDatabase() {
@@ -143,6 +146,10 @@ function deleteDatabase() {
 
 function deleteTmp() {
 	return del(configs.tmpFiles);
+}
+
+function deletePrismaGenerated() {
+	return del(configs.prismaGeneratedFolder);
 }
 
 // Deprecation Tasks
@@ -181,7 +188,7 @@ export const setupEnvs = gulp.parallel(setupProdEnv, setupDevEnv);
 
 export const handleTmp = gulp.series(setupTmpDatabaseFolder, deprecateTmp, deleteTmp);
 
-export const setupPrisma = gulp.series(generatePrismaHelpers, updateDatabaseSchema);
+export const setupPrisma = gulp.series(deletePrismaGenerated, generatePrismaHelpers, updateDatabaseSchema);
 
 export const init = gulp.parallel(deleteDist, gulp.series(gulp.parallel(setupEnvs, handleTmp), setupPrisma));
 
