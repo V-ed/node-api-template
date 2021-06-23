@@ -1,5 +1,4 @@
 import { PrismaService } from '$/prisma.service';
-import { SocketModule } from '$/socket/socket.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MessageService } from './message.service';
 
@@ -8,7 +7,6 @@ describe('MessageService', () => {
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			imports: [SocketModule],
 			providers: [MessageService, PrismaService],
 		}).compile();
 

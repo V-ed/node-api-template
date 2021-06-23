@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-// import { AppGateway } from './app.gateway';
-import { AppController } from './app.controller';
-import { ConfigModule } from './config.module';
+import { ConfigModule, env } from './config.module';
+import { Environment } from './env.validation';
 import { MessageModule } from './message/message.module';
-// import { SocketModule } from './socket/socket.module';
 import { PubSub } from './pub-sub';
 
-const isProd = process.env.NODE_ENV == 'production';
+const isProd = env.NODE_ENV == Environment.Production;
 
 const graphqlModule = GraphQLModule.forRoot({
 	autoSchemaFile: true,
@@ -17,16 +15,7 @@ const graphqlModule = GraphQLModule.forRoot({
 });
 
 @Module({
-	imports: [
-		graphqlModule,
-		ConfigModule,
-		// SocketModule,
-		MessageModule,
-	],
-	controllers: [AppController],
-	providers: [
-		// AppGateway
-		PubSub,
-	],
+	imports: [graphqlModule, ConfigModule, MessageModule],
+	providers: [PubSub],
 })
 export class AppModule {}
