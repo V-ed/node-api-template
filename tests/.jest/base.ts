@@ -26,8 +26,7 @@ const baseConfig = defineBaseJestConfig({
 });
 
 export function defineJestConfig<T extends Config.InitialOptions>(config: T): T & typeof baseConfig {
-	// @ts-ignore
-	return deepmerge(config, baseConfig);
+	return deepmerge(config, baseConfig) as T & typeof baseConfig;
 }
 
 export default baseConfig;
