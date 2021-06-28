@@ -47,7 +47,7 @@
     "@nestjs/cli": "7.6.0",
     "@nestjs/schematics": "7.3.1",
     "@nestjs/testing": "7.6.18",
-    "@paljs/plugins": "3.3.3",
+    "@paljs/plugins": "3.4.0",
     "@types/express": "4.17.12",
     "@types/faker": "5.5.6",
     "@types/gulp": "4.0.8",
