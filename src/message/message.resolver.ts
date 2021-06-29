@@ -8,17 +8,17 @@ export class MessageResolver {
 	constructor(private messageService: MessageService) {}
 
 	@Query(() => [Message])
-	messages(@Args('where', { nullable: true }) where: MessageWhereInput, @Info() info: GraphQLResolveInfo) {
+	messages(@Info() info: GraphQLResolveInfo, @Args('where', { nullable: true }) where: MessageWhereInput) {
 		return this.messageService.find(info, where);
 	}
 
 	@Mutation(() => Message, { nullable: true })
-	addMessage(@Args('data') data: MessageCreateInput, @Info() info: GraphQLResolveInfo) {
+	addMessage(@Info() info: GraphQLResolveInfo, @Args('data') data: MessageCreateInput) {
 		return this.messageService.create(info, data);
 	}
 
 	@Mutation(() => Message)
-	updateMessage(@Args('query') query: MessageUpdateWithWhereUniqueWithoutUserInput, @Info() info: GraphQLResolveInfo) {
+	updateMessage(@Info() info: GraphQLResolveInfo, @Args('query') query: MessageUpdateWithWhereUniqueWithoutUserInput) {
 		return this.messageService.update(info, query);
 	}
 
