@@ -49,7 +49,7 @@
 			{ "blankLine": "any", "prev": "directive", "next": "directive" }
 		],
 		"no-unused-vars": "off",
-		"keyword-spacing": ["error", { "before": true }],
+		"keyword-spacing": ["error", { "before": true, "overrides": { "this": { "before": false } } }],
 		"space-before-blocks": "error",
 		"arrow-spacing": "error",
 		"space-infix-ops": ["error", { "int32Hint": false }],

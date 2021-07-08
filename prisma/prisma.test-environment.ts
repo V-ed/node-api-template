@@ -19,12 +19,12 @@ export class PrismaTestEnvironment extends NodeEnvironment {
 		const dbUrl = `file:./${prismaDbUrl}`;
 
 		process.env.DATABASE_URL = dbUrl;
-		this.global.process.env.DATABASE_URL = dbUrl;
+		(<any>this.global.process).env.DATABASE_URL = dbUrl;
 
 		const seedName = 'test';
 
 		process.env.SEED = seedName;
-		this.global.process.env.SEED = seedName;
+		(<any>this.global.process).env.SEED = seedName;
 
 		// Run the migrations to ensure our schema has the required structure
 		await pushDb({ skipGenerators: true });
