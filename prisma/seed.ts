@@ -1,15 +1,21 @@
-import { ImportFixtureOptions, loadFixtures } from './fixtures-loader';
+import { PrismaClient } from '@prisma/client';
+import { ImportFixtureOptions, importFixtures } from 'prisma-fixtures';
 
-export function seed(...args: Parameters<typeof loadFixtures>) {
-	return loadFixtures(...args);
+export function seed(options?: Partial<ImportFixtureOptions>) {
+	return importFixtures({
+		...{
+			prisma: options?.prisma ?? new PrismaClient(),
+		},
+		...options,
+	});
 }
 
-export function seedTests(...args: Parameters<typeof seed>) {
+export function seedTests(options?: Partial<ImportFixtureOptions>) {
 	const testArgs: Partial<ImportFixtureOptions> = {
 		...{
 			fixturesPath: './tests/fixtures',
 		},
-		...args[0],
+		...options,
 	};
 
 	return seed(testArgs);

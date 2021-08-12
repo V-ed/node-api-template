@@ -1,6 +1,6 @@
 import { Message, PrismaClient } from '@prisma/client';
 import f from 'faker';
-import { createRange, Fixture, LinkMethod, LinkMode } from '../../prisma/fixtures-loader';
+import { createRange, Fixture, LinkMethod, LinkMode } from 'prisma-fixtures';
 import UserFixture from './Users';
 
 export default class MessageFixture extends Fixture<Message> {

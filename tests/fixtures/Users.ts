@@ -1,6 +1,6 @@
 import { PrismaClient, User } from '@prisma/client';
 import f from 'faker';
-import { createRange, Fixture } from '../../prisma/fixtures-loader';
+import { createRange, Fixture } from 'prisma-fixtures';
 
 export default class UserFixture extends Fixture<User> {
 	override dependencies = [];
