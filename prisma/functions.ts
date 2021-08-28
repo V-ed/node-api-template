@@ -1,6 +1,7 @@
 import { exec as execNoPromise } from 'child_process';
 import path from 'path';
 import util from 'util';
+import { seedTests } from './seed';
 
 // Prisma Utils
 
@@ -26,4 +27,11 @@ export async function pushDb(options?: Partial<PushDbOptions>) {
 
 export async function seedDb() {
 	return exec(`${prismaBinary} db seed --preview-feature`);
+}
+
+export async function prepareTestDb() {
+	// Run the migrations to ensure our schema has the required structure
+	await pushDb({ skipGenerators: true });
+
+	await seedTests();
 }

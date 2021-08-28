@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export enum Environment {
 	Development = 'development',
@@ -26,6 +26,46 @@ export class EnvironmentConfig {
 	@IsString()
 	readonly KEY!: string;
 
+	// ---------------
+	//     DATABASE
+	// ---------------
+
+	@IsOptional()
+	@IsString()
+	readonly DB_USER?: string;
+
+	@IsOptional()
+	@IsString()
+	readonly DB_PSW?: string;
+
+	@IsOptional()
+	@IsString()
+	readonly DB_CONN?: string;
+
+	@IsOptional()
+	@IsString()
+	readonly DB_NAME?: string;
+
+	@IsOptional()
+	@IsString()
+	readonly DB_TEST_USER?: string;
+
+	@IsOptional()
+	@IsString()
+	readonly DB_TEST_PSW?: string;
+
+	@IsOptional()
+	@IsString()
+	readonly DB_TEST_CONN?: string;
+
+	@IsOptional()
+	@IsString()
+	readonly DB_TEST_NAME?: string;
+
 	@IsString()
 	readonly DATABASE_URL!: string;
+
+	@IsOptional()
+	@IsString()
+	readonly TEST_DATABASE_URL?: string;
 }

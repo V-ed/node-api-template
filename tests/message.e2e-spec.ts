@@ -4,10 +4,10 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 import gql from 'graphql-tag';
-import { seedTests } from '../prisma/seed';
+import { prepareTestDb } from '../prisma/functions';
 
 beforeAll(async () => {
-	await seedTests();
+	await prepareTestDb();
 });
 
 describe('MessageController (e2e)', () => {
