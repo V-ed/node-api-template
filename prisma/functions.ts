@@ -15,12 +15,15 @@ export async function generate() {
 
 export type PushDbOptions = {
 	skipGenerators: boolean;
+	acceptDataLoss: boolean;
 };
 
 export async function pushDb(options?: Partial<PushDbOptions>) {
-	const opts: PushDbOptions = { ...{ skipGenerators: false }, ...(options ?? {}) };
+	const opts: PushDbOptions = { ...{ skipGenerators: false, acceptDataLoss: false }, ...(options ?? {}) };
 
-	const optionsString = opts.skipGenerators ? ' --skip-generate' : '';
+	let optionsString = opts.skipGenerators ? ' --skip-generate' : '';
+
+	optionsString = `${optionsString}${opts.acceptDataLoss ? ' --accept-data-loss' : ''}`;
 
 	return exec(`${prismaBinary} db push${optionsString}`);
 }
@@ -31,7 +34,7 @@ export async function seedDb() {
 
 export async function prepareTestDb() {
 	// Run the migrations to ensure our schema has the required structure
-	await pushDb({ skipGenerators: true });
+	await pushDb({ skipGenerators: true, acceptDataLoss: true });
 
 	await seedTests();
 }
