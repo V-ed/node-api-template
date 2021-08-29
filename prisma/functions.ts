@@ -36,5 +36,5 @@ export async function prepareTestDb() {
 	// Run the migrations to ensure our schema has the required structure
 	await pushDb({ skipGenerators: true, acceptDataLoss: true });
 
-	await seedTests();
+	return await seedTests();
 }
