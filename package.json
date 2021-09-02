@@ -12,7 +12,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:debug:no-watch": "nest start --debug",
-    "start:prod": "node ./dist/src/main.js",
+    "start:prod": "node ./dist/main.js",
     "clean:db": "gulp cleanDb",
     "delete:dist": "gulp deleteDist",
     "generate": "gulp setupPrisma",
