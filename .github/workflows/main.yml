@@ -47,17 +47,17 @@ jobs:
         with:
           node-version: ${{env.NODE_VERSION}}
 
-      - name: Install
-        run: npm ci --no-optional
-
-      - name: Build
-        run: npm run build
-
       - name: Version Check
         id: check
         uses: EndBug/version-check@v2.0.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install
+        run: npm ci --no-optional
+
+      - name: Build
+        run: npm run build
 
   test:
     name: 'Test and Coverage'
