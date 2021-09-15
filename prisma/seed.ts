@@ -1,24 +1,14 @@
-import { PrismaClient } from '@prisma/client';
-import { ImportFixtureOptions, importFixtures } from 'prisma-fixtures';
+import { seed } from './functions';
 
-export function seed(options?: Partial<ImportFixtureOptions>) {
-	return importFixtures({
-		...{
-			prisma: options?.prisma ?? new PrismaClient(),
-		},
-		...options,
-	});
+async function runCliSeeds() {
+	const seedData = await seed();
+
+	const formattedData = seedData.map((data) => ({
+		fixture: data.name,
+		modelsCount: data.models.length,
+	}));
+
+	console.log(`Seed data :`, formattedData);
 }
 
-export function seedTests(options?: Partial<ImportFixtureOptions>) {
-	const testArgs: Partial<ImportFixtureOptions> = {
-		...{
-			fixturesPath: './tests/fixtures',
-		},
-		...options,
-	};
-
-	return seed(testArgs);
-}
-
-export default seed;
+runCliSeeds();

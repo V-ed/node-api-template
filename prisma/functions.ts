@@ -1,7 +1,8 @@
+import { PrismaClient } from '@prisma/client';
 import { exec as execNoPromise } from 'child_process';
 import path from 'path';
+import { ImportFixtureOptions, importFixtures } from 'prisma-fixtures';
 import util from 'util';
-import { seedTests } from './seed';
 
 // Prisma Utils
 
@@ -32,12 +33,28 @@ export async function pushDb(options?: Partial<PushDbOptions>) {
 }
 
 export async function seedDb() {
-	return exec(`${prismaBinary} db seed --preview-feature`);
+	return exec(`${prismaBinary} db seed`);
 }
 
-export async function prepareTestDb() {
+export async function prepareTestDb(options?: Partial<ImportFixtureOptions>) {
 	// Run the migrations to ensure our schema has the required structure
 	await pushDb({ skipGenerators: true, acceptDataLoss: true, forceReset: true });
 
-	return await seedTests();
+	const testArgs: Partial<ImportFixtureOptions> = {
+		...{
+			fixturesPath: './tests/fixtures',
+		},
+		...options,
+	};
+
+	return seed(testArgs);
+}
+
+export function seed(options?: Partial<ImportFixtureOptions>) {
+	return importFixtures({
+		...{
+			prisma: options?.prisma ?? new PrismaClient(),
+		},
+		...options,
+	});
 }

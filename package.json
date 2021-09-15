@@ -30,13 +30,16 @@
     "preversion": "npm run lint",
     "postversion": "git push"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "dependencies": {
     "@nestjs/common": "8.0.6",
     "@nestjs/core": "8.0.6",
     "@nestjs/graphql": "9.0.4",
     "@nestjs/platform-express": "8.0.6",
-    "@paljs/plugins": "3.8.3",
-    "@prisma/client": "2.30.3",
+    "@paljs/plugins": "4.0.8",
+    "@prisma/client": "3.0.2",
     "apollo-server-core": "3.3.0",
     "apollo-server-express": "3.3.0",
     "class-validator": "0.13.1",
@@ -61,7 +64,7 @@
     "@types/gulp-rename": "2.0.1",
     "@types/gulp-replace": "0.0.31",
     "@types/jest": "27.0.1",
-    "@types/node": "16.7.10",
+    "@types/node": "16.9.1",
     "@types/supertest": "2.0.11",
     "@typescript-eslint/eslint-plugin": "4.31.1",
     "@typescript-eslint/parser": "4.31.1",
@@ -79,7 +82,7 @@
     "jest": "27.2.0",
     "json5": "2.2.0",
     "prettier": "2.4.0",
-    "prisma": "2.30.3",
+    "prisma": "3.0.2",
     "prisma-fixtures": "0.0.1",
     "prisma-nestjs-graphql": "14.0.1",
     "supertest": "6.1.6",
