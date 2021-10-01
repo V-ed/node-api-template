@@ -1,5 +1,4 @@
-import { PrismaService } from '$/prisma.service';
-import { PubSub } from '$/pub-sub';
+import { PrismaModule } from '$/prisma/prisma.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MessageResolver } from './message.resolver';
 import { MessageService } from './message.service';
@@ -9,7 +8,8 @@ describe('MessageResolver', () => {
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [MessageResolver, PrismaService, PubSub, MessageService],
+			imports: [PrismaModule],
+			providers: [MessageResolver, MessageService],
 		}).compile();
 
 		resolver = module.get<MessageResolver>(MessageResolver);

@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from './config.module';
 import { GraphQLModule } from './graphql.module';
 import { MessageModule } from './message/message.module';
-import { PubSub } from './pub-sub';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-	imports: [GraphQLModule, ConfigModule, MessageModule],
-	providers: [PubSub],
+	imports: [ConfigModule, PrismaModule, GraphQLModule, MessageModule],
+	providers: [],
 })
 export class AppModule {}
