@@ -133,18 +133,6 @@ jobs:
         env:
           DATABASE_URL: 'postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres'
 
-  release-please:
-    name: 'Run Release Please'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Release
-        uses: GoogleCloudPlatform/release-please-action@v2
-        with:
-          token: '${{ secrets.GITHUB_TOKEN }}'
-          release-type: node
-          bump-minor-pre-major: true
-
   deploy:
     name: 'Deploy'
     runs-on: ubuntu-latest
