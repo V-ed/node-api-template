@@ -1,5 +1,5 @@
-import { PrismaService } from '$/prisma/prisma.service';
-import { PubSub } from '$/prisma/pub-sub';
+import { PrismaService } from '$common/prisma/prisma.service';
+import { PubSub } from '$common/prisma/pub-sub';
 import { MessageCreateInput, MessageUpdateWithWhereUniqueWithoutUserInput, MessageWhereInput } from '$prisma-graphql/message';
 import { Injectable } from '@nestjs/common';
 import { PrismaSelect } from '@paljs/plugins';

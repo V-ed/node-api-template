@@ -1,7 +1,7 @@
+import { env } from '$common/configs/config.module';
+import { Environment } from '$common/configs/env.validation';
 import { GraphQLModule as NestGraphQLModule } from '@nestjs/graphql';
 import depthLimit from 'graphql-depth-limit';
-import { env } from './configs/config.module';
-import { Environment } from './configs/env.validation';
 
 const isProd = env.NODE_ENV == Environment.Production;
 
