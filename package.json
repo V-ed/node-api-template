@@ -29,9 +29,7 @@
     "test:specs": "jest --config tests/.jest/jest.specs-config.ts",
     "test:e2e": "jest --config tests/.jest/jest.e2e-config.ts",
     "test:watch": "npm run test -- --watch",
-    "test:cov": "npm run test -- --coverage",
-    "preversion": "npm run lint",
-    "postversion": "git push"
+    "test:cov": "npm run test -- --coverage"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
