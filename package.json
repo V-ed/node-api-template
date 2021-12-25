@@ -6,7 +6,8 @@
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": ">=16"
+    "node": ">=16",
+    "npm": "^7.0.0 || ^8.0.0"
   },
   "scripts": {
     "init": "gulp init",
@@ -50,7 +51,6 @@
     "graphql": "15.8.0",
     "graphql-depth-limit": "1.1.0",
     "graphql-subscriptions": "1.2.1",
-    "graphql-tools": "8.2.0",
     "graphql-ws": "5.5.5",
     "nest-typed-config": "2.2.3",
     "reflect-metadata": "0.1.13",
