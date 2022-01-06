@@ -14,14 +14,16 @@ export async function generate() {
 	return exec(`${prismaBinary} generate`);
 }
 
-export type PushDbOptions = {
+export type PushDbOptions = Partial<{
 	skipGenerators: boolean;
 	acceptDataLoss: boolean;
 	forceReset: boolean;
-};
+}>;
 
-export async function pushDb(options?: Partial<PushDbOptions>) {
-	const opts: PushDbOptions = { ...{ skipGenerators: false, acceptDataLoss: false, forceReset: false }, ...(options ?? {}) };
+export async function pushDb(options: PushDbOptions = {}) {
+	const defaultOptions: PushDbOptions = {};
+
+	const opts: PushDbOptions = { ...defaultOptions, ...options };
 
 	const mapping: Record<keyof PushDbOptions, string> = {
 		skipGenerators: '--skip-generate',
