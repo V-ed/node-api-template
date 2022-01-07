@@ -1,4 +1,4 @@
-name: Renovate Checks
+name: Renovate
 
 on:
   push:
