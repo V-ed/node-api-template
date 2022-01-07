@@ -6,8 +6,8 @@
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": "^16.0.0",
-    "npm": "^7.0.0 || ^8.0.0"
+    "node": "16",
+    "npm": "7 || 8"
   },
   "scripts": {
     "init": "gulp init",
